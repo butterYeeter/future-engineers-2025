@@ -17,7 +17,7 @@ ultson = UltrasonicSensor(Port.S2)
 
 
 target_value = 165
-Kp = 1.2
+Kp = 1.5
 Ki = 0
 Kd = 0.01
 
@@ -26,7 +26,7 @@ error = 0
 derivative = 0
 integral = 0
 
-big_motor.dc(100)
+big_motor.dc(50)
 
 while True:
   error = compass.read('COMPASS')[0] - target_value
@@ -39,3 +39,7 @@ while True:
   buttons = ev3.buttons.pressed()
   if Button.LEFT in buttons:
     target_value = 75
+  elif Button.RIGHT in buttons:
+    target_value = 255
+  elif Button.UP in buttons:
+    target_value = 165
