@@ -16,10 +16,10 @@ compass = Ev3devSensor(Port.S1)
 ultson = UltrasonicSensor(Port.S2)
 
 
-target_value = 200
-Kp = 10
+target_value = 165
+Kp = 1.2
 Ki = 0
-Kd = 0.5
+Kd = 0.01
 
 last_error = 0
 error = 0
@@ -29,15 +29,13 @@ integral = 0
 big_motor.dc(100)
 
 while True:
-  error = target_value - ultson.distance()
+  error = compass.read('COMPASS')[0] - target_value
   integral += error
   derivative = error - last_error
   last_error = error
   correction = Kp * error + Ki * integral + Kd * error
-  # med_motor.run_until_stalled(correction, duty_limit=30)
-  med_motor.run(correction)
-  print(correction, med_motor.angle())
+  med_motor.track_target(correction)
+
   buttons = ev3.buttons.pressed()
-  if Button.UP in buttons:
-    med_motor.run_target(360, 0)
-    break
+  if Button.LEFT in buttons:
+    target_value = 75
