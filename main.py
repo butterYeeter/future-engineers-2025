@@ -1,9 +1,10 @@
 #!/usr/bin/env pybricks-micropython
 from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import Motor
+from pybricks.ev3devices import Motor, GyroSensor, ColorSensor
 from pybricks.parameters import Port, Stop, Direction, Button
 from pybricks.nxtdevices import UltrasonicSensor
 from pybricks.iodevices import Ev3devSensor
+from pybricks.tools import DataLog
 from calib import calib_steering
 import queue
 
@@ -20,7 +21,7 @@ class Turn(Action):
     super().__init__(robot)
     self.direction = direction
     self.has_turned = False
-    self.cooldown = 3000
+    self.cooldown = 100
 
   def loop(self):
     if self.direction == Direction.COUNTERCLOCKWISE and not self.has_turned:
@@ -29,6 +30,7 @@ class Turn(Action):
     if self.direction == Direction.COUNTERCLOCKWISE and not self.has_turned:
       self.robot.traget_value += 90
       self.has_turned = True
+
     self.cooldown -= 1
     if self.cooldown <= 0:
       self.done = True
@@ -58,21 +60,25 @@ class Robot:
     self.big_motor = Motor(Port.B, positive_direction = Direction.COUNTERCLOCKWISE)
     self.med_motor = Motor(Port.C)
 
-    self.left_ultrasonic = UltrasonicSensor(Port.S3)
-    self.right_ultrasonic = UltrasonicSensor(Port.S2)
-    self.current_left_distance = self.left_ultrasonic.distance()
-    self.current_right_distance = self.right_ultrasonic.distance()
+    self.color_sensor = Ev3devSensor(Port.S2)
 
-    self.compass = Ev3devSensor(Port.S1)
+    self.compass = GyroSensor(Port.S1)
 
-    self.target_value = self.compass.read("COMPASS")[0]
+    self.target_value = self.compass.angle()
     calib_steering(self.med_motor)
+
+    self.log = DataLog("color_distance")
 
   def drive_forward(self, speed=75):
     self.big_motor.dc(speed)
 
+  @staticmethod
+  def color_distance(color, target=(0, 0, 255)):
+    return sum((color[i]/255 - target[i]/255) ** 2 for i in range(len(color)))
+
   def loop(self):
-    self.error = self.compass.read("COMPASS")[0] - self.target_value
+    raw_angle = self.compass.angle()
+    self.error = raw_angle - self.target_value
     self.integral += self.error
     self.derivative = self.error - self.last_error
     self.last_error = self.error
@@ -83,18 +89,13 @@ class Robot:
       self.current_action.loop()
       if self.current_action.done:
         self.current_action = None
-        
-    ld = self.left_ultrasonic.distance()
-    rd = self.right_ultrasonic.distance()
 
-    dld = self.current_left_distance - ld
-    drd = self.current_right_distance - rd
-
-    self.current_left_distance = ld
-    self.current_right_distance = rd
-
-    if dld < -1000:
-      if not self.current_action: 
+    rgb = self.color_sensor.read("NORM")[0:3]
+    distance = self.color_distance(rgb)
+    self.log.log(distance)
+    if distance < 0.6:
+      if not self.current_action:
+        print("Found blue! Turning")
         self.current_action = Turn(self, Direction.COUNTERCLOCKWISE)
 
 robot = Robot()
