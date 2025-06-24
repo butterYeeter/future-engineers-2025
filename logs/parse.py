@@ -20,7 +20,7 @@ fig, axes = plt.subplots(1,1) # Create two subplots
 
 # axes.plot(left_distance, label="left distance")
 # axes.hist(angles)
-axes.plot(angles, label="angle")
+axes.plot(angles, label="squared distance")
 # axes.plot(target_angles, label="target angle")
 # axes.plot(delta_distances, label="delta")
 plt.legend()
