@@ -25,4 +25,6 @@ void mpu6050_read_raw(int16_t [7]);
 
 void mpu6050_read_float(float buf[7]);
 
-#endif
+// float mpu6050_read_gyro_z();
+
+#endif /* MPU6050 */

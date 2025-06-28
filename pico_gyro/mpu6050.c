@@ -112,3 +112,15 @@ void mpu6050_read_float(float buf[7]) {
     buf[i+4] = (float)tmp[i+4]/32.8;
   }
 }
+
+// float mpu6050_read_gyro_z() {
+//   uint8_t start_addr = 0x43;
+//   uint8_t tmp[6];
+
+//   i2c_write_blocking(MPU_I2C_PORT, MPU_ADDR, &start_addr, 1, true);
+//   i2c_read_blocking(MPU_I2C_PORT, MPU_ADDR, tmp, 6, false);
+
+//   uint16_t uigz = (uint16_t)(tmp[4] << 8 | tmp[5]) - calib.gyro_offset[2];
+
+//   return uigz/32.8;
+// }
