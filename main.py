@@ -1,10 +1,10 @@
 #!/usr/bin/env pybricks-micropython
 from pybricks.hubs import EV3Brick
-from pybricks.ev3devices import Motor, GyroSensor, ColorSensor
+from pybricks.ev3devices import Motor, GyroSensor, ColorSensor, UltrasonicSensor
 from pybricks.parameters import Port, Stop, Direction, Button
-from pybricks.nxtdevices import UltrasonicSensor
+# from pybricks.nxtdevices import 
 from pybricks.iodevices import Ev3devSensor
-from pybricks.tools import DataLog
+from pybricks.tools import DataLog, StopWatch
 from calib import calib_steering
 import queue
 
@@ -56,7 +56,7 @@ class Turn(Action):
     super().__init__(robot)
     self.direction = direction
     self.has_turned = False
-    self.cooldown = 100
+    self.cooldown = 400
 
   def loop(self):
     if self.direction == Direction.COUNTERCLOCKWISE and not self.has_turned:
@@ -78,6 +78,13 @@ class PIDController:
     pass
 
 
+    # color sensor stuff...
+    # rgb = self.color_sensor.read('NORM')[0:3]
+    # bl, hsv = is_blue(rgb)
+    # self.log.log(rgb, hsv, bl)
+    # if bl:
+    #   if not self.current_action:
+    #     self.current_action = Turn(self, Direction.COUNTERCLOCKWISE)
 
 robot = Robot()
 robot.drive_forward(speed=20)
