@@ -32,6 +32,8 @@ int main()
 
     gpio_init(25);
     gpio_set_dir(25, GPIO_OUT);
+    gpio_init(15);
+    gpio_set_dir(15, GPIO_OUT);
 
     gpio_put(25, true);
     mpu6050_init();
@@ -46,6 +48,7 @@ int main()
     uint64_t last_time, current_time;
     current_time = to_us_since_boot(get_absolute_time());
     last_time = current_time;
+    uint64_t last_print = current_time;
 
     float angle = 0.0f;         // Integrated angle using gyro
     float gyro_prev = 0.0f;     // Previous value for apply low pass filter
@@ -80,6 +83,12 @@ int main()
             // Toggle LED to show data being sent(for debugging serial conenction)
             bool state = gpio_get(25);
             gpio_put(25, state ^ true);
+        }
+
+        if (current_time - last_print > 500000) {
+            bool state = gpio_get(15);
+            gpio_put(15, state ^ true);
+            last_print = current_time;
         }
     }
 }
