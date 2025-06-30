@@ -2,21 +2,20 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
+#include <time.h>
+#include <stdlib.h>
 
-int main(int argc, char **argv) {
-  
-  if (argc < 2) {
-    printf("Please supply a port!\n");
-    return 1;
-  }
+int pico_fd;
 
-  printf("Opening port %s\n", argv[1]);
-  int pico_fd = open(argv[1] , O_RDWR | O_NOCTTY | O_SYNC);
+int init_usb(char *port, int baudrate) {
+  printf("Opening port %s\n", port);
+  pico_fd = open(port , O_RDWR | O_NOCTTY | O_SYNC);
 
   if (pico_fd < 0) {
-    printf("Failed to open %s\n", argv[1]);
+    printf("Failed to open %s\n", port);
     return 1;
   }
+
 
   struct termios tty;
 
@@ -34,7 +33,7 @@ int main(int argc, char **argv) {
   tty.c_cflag &= ~CSTOPB;
   tty.c_cflag &= ~PARENB;
   tty.c_cflag |= (CLOCAL | CREAD);
-  tty.c_cc[VMIN] = 1;
+  tty.c_cc[VMIN] = 4;
   tty.c_cc[VTIME] = 1;
 
   cfsetispeed(&tty, B115200);
@@ -46,22 +45,33 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+  return 0;
+}
 
+void flush_input() {
   tcflush(pico_fd, TCIFLUSH);
   sleep(1);
-  char buf[32];
-  while (1) {
-    char cmd = 'd';
-    write(pico_fd, &cmd, 1);
+}
 
-    int n = read(pico_fd, buf, 32);
+int write_usb(char buf[], int len) {
+  return write(pico_fd, buf, len);
+}
 
-    //float *f = buf;
-    //printf("%f\n", *f);
-    printf("RECEIVED (%d bytes): %s\n", n , buf);
-    usleep(100000);
-  }
+int read_usb(char buf[], int len) {
+  return read(pico_fd, buf, len);
+}
 
+void deinit() {
   close(pico_fd);
-  return 0;
+}
+
+float angle() {
+  char buf[32];
+  char cmd = 'd';
+  int n = write(pico_fd, &cmd, 1);
+  printf("wrote %d bytes\n", n);
+
+  n = read(pico_fd, buf, sizeof(buf));
+  printf("Read %d bytes\n", n);
+  return atof(buf);
 }

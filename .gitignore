@@ -1,3 +1,5 @@
 # Git Ignore
 .vscode/*
+*/.vscode
+*/build
 *.csv
