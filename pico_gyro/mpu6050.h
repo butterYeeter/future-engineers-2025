@@ -13,8 +13,8 @@
 #define MPU_ADDR 0x68
 
 typedef struct {
-  int16_t accel_offset[3];
-  int16_t gyro_offset[3];
+  float accel_offset[3];
+  float gyro_offset[3];
 } mpu6050_calibration_t;
 
 void mpu6050_init();

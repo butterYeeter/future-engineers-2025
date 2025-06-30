@@ -4,6 +4,19 @@ import struct
 from math import *
 import numpy as np
 
+
+def unwrap_angle(delta):
+    """Unwrap angle to [-180, 180] range"""
+    if delta > 180:
+        delta -= 360
+    elif delta < -180:
+        delta += 360
+    return delta
+
+# Initial values
+prev_heading = None
+accumulated_angle = 0.0
+
 ser = serial.Serial('COM14', baudrate=115200)
 # f = open("test.txt", 'w')
 
@@ -39,8 +52,19 @@ while True:
   # atan2()
   
 
-  print(calculate_heading(corrected[0], corrected[1]))
-  time.sleep(0.05)
+  # print(calculate_heading(corrected[0], corrected[1]))
+  # time.sleep(0.05)
+  x, y, _ = corrected
+  heading = degrees(atan2(y, x))
+  if heading < 0:
+    heading += 360
+
+  # if prev_heading is not None:
+  #   delta = unwrap_angle(heading - prev_heading)
+  #   accumulated_angle += delta
+
+  # prev_heading = heading
+  print(f"Accumulated angle: {heading:.2f}°")
 
 
 

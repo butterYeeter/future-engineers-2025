@@ -6,16 +6,10 @@ ser = serial.Serial('COM14', baudrate=115200)
 
 angle = 0
 
+ser.reset_input_buffer()
 while True:
-  # ser.flush()
-  # val = struct.unpack('f'*3, ser.read(12))
-  # print(ser.readline().decode())
-  # print(ser.readline().decode().strip())
-  # v, dt = map(float, ser.readline().decode().strip().split(', '))
-  # print(type(ser.readline()))
   sd = 'd'
   ser.write(sd.encode())
-  val = struct.unpack('<f', ser.read(4))[0]
-  # angle += v * dt/10**6
-  print(val)
+  # val = struct.unpack('<f', ser.read(4))[0]
+  print(ser.readline().decode().strip())
   time.sleep(0.1)

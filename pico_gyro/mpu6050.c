@@ -43,20 +43,20 @@ void mpu6050_init() {
 
 
 void mpu6050_calibrate(int num_samples) {
-  int32_t accel_sum[3] = {0};
-  int32_t gyro_sum[3] = {0};
-  int16_t raw[7];
+  float accel_sum[3] = {0};
+  float gyro_sum[3] = {0};
+  float raw[7];
 
-  printf("Calibrating MPU6050... keep device stable\n");
+  //printf("Calibrating MPU6050... keep device stable\n");
 
   for (int i = 0; i < num_samples; i++) {
-    mpu6050_read_raw(raw);
+    mpu6050_read_float(raw);
 
     // Accumulate accelerometer readings
     for (int j = 0; j < 3; j++) {
-      int32_t g_offset = 0;
+      float g_offset = 0;
       if (j == 2)
-        g_offset = 4096;
+        g_offset = 1.0f;
 
       accel_sum[j] += raw[j] - g_offset;
     }
@@ -66,7 +66,7 @@ void mpu6050_calibrate(int num_samples) {
       gyro_sum[j] += raw[j + 4];
     }
 
-    sleep_ms(10);
+    // sleep_ms(10);
   }
 
   // Calculate average offsets
@@ -78,8 +78,8 @@ void mpu6050_calibrate(int num_samples) {
   // printf("Calibration complete:\n");
   // printf("  Accel offsets: X=%d, Y=%d, Z=%d\n", calib.accel_offset[0],
   //        calib.accel_offset[1], calib.accel_offset[2]);
-  // printf("  Gyro offsets: X=%d, Y=%d, Z=%d\n", calib.gyro_offset[0],
-  //        calib.gyro_offset[1], calib.gyro_offset[2]);
+  //printf("  Gyro offsets: X=%f, Y=%f, Z=%f\n", calib.gyro_offset[0],
+  //       calib.gyro_offset[1], calib.gyro_offset[2]);
 }
 
 void mpu6050_read_raw(int16_t buf[7]) {
@@ -96,10 +96,10 @@ void mpu6050_read_raw(int16_t buf[7]) {
   }
 
   // Apply calibration offsets
-  for (int i = 0; i < 3; i++) {
-    buf[i] -= calib.accel_offset[i];
-    buf[i + 4] -= calib.gyro_offset[i];
-  }
+  // for (int i = 0; i < 3; i++) {
+  //   buf[i] -= calib.accel_offset[i];
+  //   buf[i + 4] -= calib.gyro_offset[i];
+  // }
 }
 
 void mpu6050_read_float(float buf[7]) {
@@ -108,8 +108,8 @@ void mpu6050_read_float(float buf[7]) {
   mpu6050_read_raw(tmp);
   
   for (int i = 0; i < 3; i++) {
-    buf[i] = (float)tmp[i]/4096;
-    buf[i+4] = (float)tmp[i+4]/32.8;
+    buf[i] = (float)tmp[i]/4096 - calib.accel_offset[i];
+    buf[i+4] = (float)tmp[i+4]/32.8 - calib.gyro_offset[i];
   }
 }
 
