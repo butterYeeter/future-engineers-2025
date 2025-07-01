@@ -1,2 +1,2 @@
-libusbser.so: usbser.c
-	gcc -shared -fPIC -o libusbser.so usbser.c
+libusbserial.so: usb_serial.c
+	gcc -shared -fPIC -o libusbserial.so usb_serial.c

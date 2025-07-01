@@ -1,16 +1,14 @@
-import ffi
+from pybricks.hubs import EV3Brick
+from pybricks.ev3devices import Motor
+from pybricks.parameters import Port, Direction
+from pybricks.tools import wait, DataLog
+from calib import calib_steering
+from pid import PIDController
+from gyro import Gyro
 
 class Robot:
   def __init__(self):
     self.ev3 = EV3Brick()
-    self.Kp = 1.5
-    self.Ki = 0
-    self.Kd = 0.01
-
-    self.last_error = 0
-    self.error = 0
-    self.derivative = 0
-    self.integral = 0
 
     self.actions = []
     self.current_action = None
@@ -18,10 +16,18 @@ class Robot:
     self.big_motor = Motor(Port.B, positive_direction = Direction.COUNTERCLOCKWISE)
     self.med_motor = Motor(Port.C)
 
-    self.target_value = self.compass.angle()
+    self.gyro = Gyro()
+    self.gyro.init()
+    self.target_value = self.gyro.get_angle()
+    # self.pid = PIDController(self.target_value, 0.005, 0.0002, 0.05)
+    self.integral = 0
+    self.derivative = 0
+    self.last_error = 0
+    wait(1000)
     calib_steering(self.med_motor)
 
-    # self.log = DataLog("RGB", "HSV", "Detected", name='../usb/log')
+
+    self.log = DataLog("Target angle", "Current Angle", "PID Correction", "Error", name='../logs/log')
 
   def drive_forward(self, speed=75):
     self.big_motor.dc(speed)
@@ -31,13 +37,12 @@ class Robot:
     return sum((color[i]/255 - target[i]/255) ** 2 for i in range(len(color)))
 
   def loop(self):
-    raw_angle = self.compass.angle()
-    self.error = raw_angle - self.target_value
-    self.integral += self.error
-    self.derivative = self.error - self.last_error
-    self.last_error = self.error
-    self.correction = self.Kp * self.error + self.Ki * self.integral + self.Kd * self.error
-    self.med_motor.track_target(self.correction)
+    raw_angle = self.gyro.get_angle()
+    # print(raw_angle)
+    correction, err = self.pid.loop(raw_angle)
+    correction = max(min(40, correction), -40)
+    self.log.log(self.target_value, raw_angle, correction, err)
+    self.med_motor.track_target(correction)
 
     if self.current_action:
       self.current_action.loop()

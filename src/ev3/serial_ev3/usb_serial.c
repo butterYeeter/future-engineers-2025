@@ -6,6 +6,7 @@
 #include <stdlib.h>
 
 int pico_fd;
+struct termios tty;
 
 int init_usb(char *port, int baudrate) {
   printf("Opening port %s\n", port);
@@ -15,9 +16,6 @@ int init_usb(char *port, int baudrate) {
     printf("Failed to open %s\n", port);
     return 1;
   }
-
-
-  struct termios tty;
 
   if (tcgetattr(pico_fd, &tty) != 0) {
     perror("Error: failed to get attributes");
@@ -48,20 +46,20 @@ int init_usb(char *port, int baudrate) {
   return 0;
 }
 
-void flush_input() {
+void reset_input_buffer() {
   tcflush(pico_fd, TCIFLUSH);
   sleep(1);
 }
 
-int write_usb(char buf[], int len) {
+int write_bytes(char buf[], int len) {
   return write(pico_fd, buf, len);
 }
 
-int read_usb(char buf[], int len) {
+int read_bytes(char buf[], int len) {
   return read(pico_fd, buf, len);
 }
 
-void deinit() {
+void deinit_usb() {
   close(pico_fd);
 }
 
