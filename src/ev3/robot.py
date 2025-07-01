@@ -20,13 +20,18 @@ class Turn(Action):
     self.has_turned = False
     self.cooldown = 400
 
-  def loop(self):
-    if self.direction == Direction.COUNTERCLOCKWISE and not self.has_turned:
+    if direction == Direction.COUNTERCLOCKWISE:
+      self.robot.target_value += 90
+    if direction == Direction.CLOCKWISE:
       self.robot.target_value -= 90
-      self.has_turned = True
-    if self.direction == Direction.COUNTERCLOCKWISE and not self.has_turned:
-      self.robot.traget_value += 90
-      self.has_turned = True
+
+  def loop(self):
+    # if self.direction == Direction.COUNTERCLOCKWISE and not self.has_turned:
+    #   self.robot.target_value -= 90
+    #   self.has_turned = True
+    # if self.direction == Direction.COUNTERCLOCKWISE and not self.has_turned:
+    #   self.robot.traget_value += 90
+    #   self.has_turned = True
 
     self.cooldown -= 1
     if self.cooldown <= 0:
@@ -55,29 +60,35 @@ class Robot:
     wait(500)
     self.zero_steering()
 
-    self.log = DataLog("TA", "A", "C", "E", name='../logs/log')
+    self.log = DataLog("TA", "A", "L", "DL", name='../logs/log')
 
   def drive_forward(self, speed=75):
     self.big_motor.dc(speed)
   
   def zero_steering(self):
-    m = self.MedMotor
+    m = self.med_motor
     angle_right = m.run_until_stalled(540, duty_limit=70)
     angle_left = m.run_until_stalled(-540, duty_limit=70)
     m.run_target(90, (angle_left + angle_right)/2)
     m.reset_angle(0)
 
   def loop(self):
+    self.pid.set_target(self.target_value)
     current_angle = self.gyro.get_angle()
     correction, err = self.pid.loop(current_angle)
     self.med_motor.track_target(correction)
 
-    self.log.log(self.target_value, current_angle, correction, err)
 
+    # Turn if delta distance > 1500
     left_distance = self.left_ultrasonic.distance()
-    if left_distance - self.left_distance_prev > 1500:
-      self.current_action = Turn()
+    left_delta = left_distance - self.left_distance_prev
+    if left_delta > 1500:
+      self.current_action = Turn(self, Direction.COUNTERCLOCKWISE)
+    self.left_distance_prev = left_distance
 
+    self.log.log(self.target_value, current_angle, left_distance, left_delta)
+
+    # Call the current actions loop function
     if self.current_action:
       self.current_action.loop()
       if self.current_action.done:

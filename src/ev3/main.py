@@ -10,7 +10,7 @@ import queue
 
 
 robot = Robot()
-robot.drive_forward(speed=70)
+robot.drive_forward(speed=50)
 
 while True:
   robot.loop()
