@@ -78,7 +78,8 @@ int main()
 
         // Send current angle if ev3 requests it
         if (c == 'd') {
-            printf("%f\n", angle);
+            // printf("%f\n", angle);
+            stdio_put_string((char*)&angle, sizeof(float), false, false);
 
             // Toggle LED to show data being sent(for debugging serial conenction)
             bool state = gpio_get(25);

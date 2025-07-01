@@ -60,6 +60,10 @@ target_link_libraries(main
 
 pico_add_extra_outputs(main)
 
+target_compile_definitions(main PRIVATE 
+  PICO_EMBED_XIP_SETUP=1
+)
+
 add_custom_command(
     TARGET main
     POST_BUILD
