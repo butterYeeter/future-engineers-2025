@@ -1,15 +1,24 @@
 #!/usr/bin/env pybricks-micropython
-from pybricks.hubs import EV3Brick
-from pybricks.parameters import Port, Stop, Direction, Button
-from pybricks.tools import DataLog, StopWatch
+from pybricks.parameters import Button
+from pybricks.tools import wait
 from robot import Robot
-import queue
+import sys
 
 
-
+print(sys.argv)
 
 
 robot = Robot()
+
+start = False
+
+while start == False:
+  buttons = robot.ev3.buttons.pressed()
+  if Button.CENTER in buttons:
+    start = True
+
+  wait(10)
+
 robot.drive_forward(speed=50)
 
 while True:

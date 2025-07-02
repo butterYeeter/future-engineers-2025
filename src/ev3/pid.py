@@ -1,26 +1,36 @@
 class PIDController:
-  def __init__(self, target, Kp=1, Ki=0, Kd=0):
-    self.target = target
-    self.Kp = Kp
-    self.Ki = Ki
-    self.Kd = Kd
+    def __init__(self, target, Kp=1.0, Ki=0.0, Kd=0.0, output_limit=40, integral_limit=100):
+        self.target = target
+        self.Kp = Kp
+        self.Ki = Ki
+        self.Kd = Kd
 
-    self.integral = 0
-    self.derivative = 0
-    self.last_error = 0
+        self.output_limit = output_limit
+        self.integral_limit = integral_limit
 
-  def loop(self, current_value):
-    error = self.target - current_value
-    self.integral += error
-    self.derivative = error - self.last_error
-    self.last_error = error
+        self.integral = 0
+        self.last_error = 0
 
-    correction = self.Kp * error + self.Ki * self.integral + self.Kd * self.derivative
+    def loop(self, current_value):
+        error = self.target - current_value
+        derivative = error - self.last_error
+        self.last_error = error
+        new_integral = self.integral + error
 
-    correction = max(min(40, correction), -40)
+        correction_unclamped = (
+            self.Kp * error +
+            self.Ki * new_integral +
+            self.Kd * derivative
+        )
 
-    return (correction, error)
+        correction = max(min(self.output_limit, correction_unclamped), -self.output_limit)
 
-  def set_target(self, value):
-    self.target = value
+        if correction == correction_unclamped:
+            self.integral = new_integral
 
+            self.integral = max(min(self.integral, self.integral_limit), -self.integral_limit)
+
+        return correction
+
+    def set_target(self, value):
+        self.target = value
