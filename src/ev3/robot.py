@@ -5,6 +5,7 @@ from pybricks.tools import wait, DataLog
 from pid import PIDController
 from gyro import Gyro
 from sys import argv
+from pixy import Pixy
 
 class Action:
   def __init__(self, robot):
@@ -60,6 +61,8 @@ class Robot:
     self.zero_steering()
 
     self.log = DataLog("TA", "A", "C", "LD", "dLD", name='../logs/log')
+
+    self.pixy = Pixy(Port.S2, 0x54)
 
   def drive_forward(self, speed=75):
     self.big_motor.dc(speed)
