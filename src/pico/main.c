@@ -5,6 +5,10 @@
 // #include "qmc5883.h"
 #include "math.h"
 
+#define GET_ANGLE 'a'
+#define CALIBRATE 'c'
+#define RESET_ANGLE 'r'
+
 float bi[] = {-43.924241, 12.448210, -73.133957};
 float A[3][3] = {{1.096529, -0.033064, -0.055229},
                 {-0.033064, 0.989653, -0.120042},
@@ -77,6 +81,12 @@ int main()
         int c = getchar_timeout_us(0);
 
         // Send current angle if ev3 requests it
+        switch (c) {
+            case GET_ANGLE:
+                stdio_put_string((char*)&angle, sizeof(float), false, false);
+                bool state = gpio_get(25);
+                gpio_put(25, state ^ true);
+        }
         if (c == 'd') {
             // printf("%f\n", angle);
             stdio_put_string((char*)&angle, sizeof(float), false, false);
