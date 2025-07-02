@@ -74,7 +74,7 @@ class Robot:
   def loop(self):
     self.pid.set_target(self.target_value)
     current_angle = self.gyro.get_angle()
-    correction, err = self.pid.loop(current_angle)
+    correction = self.pid.loop(current_angle)
     self.med_motor.track_target(correction)
 
 
