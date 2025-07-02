@@ -86,14 +86,14 @@ int main()
                 stdio_put_string((char*)&angle, sizeof(float), false, false);
                 bool state = gpio_get(25);
                 gpio_put(25, state ^ true);
-        }
-        if (c == 'd') {
-            // printf("%f\n", angle);
-            stdio_put_string((char*)&angle, sizeof(float), false, false);
-
-            // Toggle LED to show data being sent(for debugging serial conenction)
-            bool state = gpio_get(25);
-            gpio_put(25, state ^ true);
+                break;
+            case CALIBRATE:
+                char num_samples = getchar_timeout_us(100);
+                mpu6050_calibrate(num_samples * 100);
+                break;
+            case RESET_ANGLE:
+                angle = 0.0f;
+                break;
         }
 
         if (current_time - last_print > 500000) {
