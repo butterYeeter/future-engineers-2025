@@ -31,4 +31,4 @@ def is_blue(rgb_tuple, threshold=None):
     # Check if within all thresholds
     return (h_min <= h <= h_max and 
             s_min <= s <= s_max and 
-            v_min <= v <= v_max), (h, s, v)
+            v_min <= v <= v_max)
