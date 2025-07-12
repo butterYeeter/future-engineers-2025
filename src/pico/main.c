@@ -3,6 +3,7 @@
 #include "hardware/i2c.h"
 #include "mpu6050.h"
 // #include "qmc5883.h"
+#include "tcs34725.h"
 #include "math.h"
 
 #define GET_ANGLE 'a'
@@ -95,6 +96,9 @@ int main()
             case RESET_ANGLE:
                 angle = 0.0f;
                 break;
+            case GET_COLOR:
+                float buf[3];
+                tcs_get_color()
         }
 
         if (current_time - last_print > 500000) {
