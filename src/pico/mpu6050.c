@@ -2,12 +2,10 @@
 #include "hardware/i2c.h"
 #include <stdio.h>
 
-
 static mpu6050_calibration_t calib = {
   .accel_offset = {0, 0, 0},
   .gyro_offset = {0, 0, 0}
 };
-
 
 void mpu6050_init() {
   // Reset device register to defaults
