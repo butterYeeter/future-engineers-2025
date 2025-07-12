@@ -25,7 +25,7 @@ def get_values(num):
 get_values(100)
 
 calib = bytearray(2)
-calib.append(ord('c'))
+calib.append(ord('g'))
 calib.append(100)
 ser.write(calib)
 time.sleep(10)

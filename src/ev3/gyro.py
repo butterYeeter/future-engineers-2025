@@ -18,14 +18,27 @@ class Gyro():
     self.reset_input_buffer()
 
   def get_angle(self):
-    cmd = b'd'
+    cmd = b'a'
     self.write_bytes(cmd, len(cmd))
 
     buffer = bytearray(32)
     self.read_bytes(buffer, len(buffer))
 
-
     return ustruct.unpack('f', buffer)[0]
+  
+  def reset_angle(self):
+    cmd = b'r'
+
+    self.write_bytes(cmd, len(cmd))
+  
+  def calibrate(self, num_samples):
+    cmd = bytearray(2)
+    cmd.append(b'g')
+    cmd.append(num_samples)
+
+    self.write_bytes(cmd, len(cmd))
+
+
 
   def deinit(self):
     self.deinit_usb()

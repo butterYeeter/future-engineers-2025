@@ -6,8 +6,9 @@
 #include "math.h"
 
 #define GET_ANGLE 'a'
-#define CALIBRATE 'c'
+#define CALIBRATE 'g'
 #define RESET_ANGLE 'r'
+#define GET_COLOR 'c'
 
 float bi[] = {-43.924241, 12.448210, -73.133957};
 float A[3][3] = {{1.096529, -0.033064, -0.055229},
@@ -88,7 +89,7 @@ int main()
                 gpio_put(25, state ^ true);
                 break;
             case CALIBRATE:
-                char num_samples = getchar_timeout_us(100);
+                uint8_t num_samples = getchar_timeout_us(100);
                 mpu6050_calibrate(num_samples * 100);
                 break;
             case RESET_ANGLE:
