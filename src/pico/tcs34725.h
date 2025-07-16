@@ -32,4 +32,8 @@ bool tcs_init();
 
 void tcs_get_rgb(float buf[3]);
 
+void tcs_get_raw(uint16_t buf[4]);
+
+bool tcs_data_available();
+
 #endif /* TCS34725 */

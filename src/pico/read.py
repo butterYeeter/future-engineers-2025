@@ -14,22 +14,12 @@ def get_values(num):
     print(val)
     time.sleep(0.05)
 
-# while True:
+def get_col():
+  ser.write('c'.encode())
+  val = struct.unpack("<fff", ser.read(12))
+  print(f"{val[0]:.2f}, {val[1]:.2f}, {val[2]:.2f}")
+  time.sleep(0.1)
+
+while True:
+  get_col()
   # get_values(1)
-#   sd = 'd'
-#   ser.write(sd.encode())
-#   # val = struct.unpack('<f', ser.read(4))[0]
-#   # print(ser.readline().decode().strip())
-#   time.sleep(0.1)
-
-get_values(100)
-
-calib = bytearray(2)
-calib.append(ord('g'))
-calib.append(100)
-ser.write(calib)
-time.sleep(10)
-reset = b'r'
-ser.write(reset)
-
-get_values(100)

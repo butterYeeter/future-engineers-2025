@@ -30,16 +30,26 @@ int main()
     stdio_init_all();
 
     i2c_init(MPU_I2C_PORT, 400000);
+    i2c_init(TCS_PORT, 400000);
     
     gpio_set_function(MPU_I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(MPU_I2C_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(MPU_I2C_SDA);
     gpio_pull_up(MPU_I2C_SCL);
 
+    gpio_set_function(TCS_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(TCS_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(TCS_SDA);
+    gpio_pull_up(TCS_SCL);
+
     gpio_init(25);
     gpio_set_dir(25, GPIO_OUT);
     gpio_init(15);
     gpio_set_dir(15, GPIO_OUT);
+
+    gpio_init(TCS_INT);
+    gpio_set_dir(TCS_INT, GPIO_IN);
+    gpio_pull_up(TCS_INT);
 
     gpio_put(25, true);
     mpu6050_init();
@@ -50,6 +60,7 @@ int main()
     gpio_put(25, true);
     // qmc5883_init(CONINTUOUS | RATE_200 | GAUSS_EIGHT | OSR_512);
 
+    tcs_init();
 
     uint64_t last_time, current_time;
     current_time = to_us_since_boot(get_absolute_time());
@@ -59,6 +70,7 @@ int main()
     float angle = 0.0f;         // Integrated angle using gyro
     float gyro_prev = 0.0f;     // Previous value for apply low pass filter
     float RC = 0.000265f;       // Filter out noise above ~600HZ
+    float color[3];
     while (true) {
         float buf[7];
         mpu6050_read_float(buf);
@@ -68,6 +80,9 @@ int main()
         float delta_time = (float)(current_time - last_time)/1000000;
         last_time = current_time;
         
+        if (tcs_data_available()) {
+            tcs_get_rgb(color);
+        }
         
         // int16_t raw[3];
         // qmc5883_raw_data(raw);
@@ -86,6 +101,7 @@ int main()
         switch (c) {
             case GET_ANGLE:
                 stdio_put_string((char*)&angle, sizeof(float), false, false);
+                // printf("ANGLE: %6f\n", angle);
                 bool state = gpio_get(25);
                 gpio_put(25, state ^ true);
                 break;
@@ -97,8 +113,11 @@ int main()
                 angle = 0.0f;
                 break;
             case GET_COLOR:
-                float buf[3];
-                tcs_get_color()
+                float rgb[3];
+                tcs_get_rgb(rgb);
+                stdio_put_string((char*)rgb, 12, false, false);
+                // printf("R: %6f, G: %6f, B: %6f\n", rgb[0], rgb[1], rgb[2]);
+                break;
         }
 
         if (current_time - last_print > 500000) {
