@@ -30,7 +30,7 @@ class Robot:
         self.ld_prev = self.ultrasonic.read('US-DIST-CM')[0]
 
         self.target_angle = self.gyro.get_angle()
-        self.target_distance = 200
+        self.target_distance = self.ultrasonic.read('US-DIST-CM')[0]
 
         self.pid1 = PIDController(self.target_distance, 0.8, 0.01, 0.7, 35, 100)
         self.pid2 = PIDController(self.target_angle, 2.2, 0.02, 1.5, 35, 5)
@@ -78,7 +78,9 @@ class Robot:
                 self.ultrasonic_weight = 0.5
 
             block_color = self.pixy.get_largest_block()
-            # if b/s/ lock_color:
+            if block_color == "green":
+                self.target_distance = 150
+
             self.handle_turning(left_distance)
 
             do_turn = is_blue(self.color.get_color_corrected())
