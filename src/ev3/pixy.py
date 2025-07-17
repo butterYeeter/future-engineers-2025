@@ -32,6 +32,10 @@ class Pixy(I2CDevice):
 
     return int.from_bytes(response[6:8], 'little')
   
+  def get_largest_block(self):
+    sig = self.get_largest_signiture()
+    return {1: "red", 2: "green"}.get(sig, None)
+
   def get_blocks(self, max_num):
     cmd = bytes((174, 193, 32, 2, 255, max_num))
     self.write(0, cmd)

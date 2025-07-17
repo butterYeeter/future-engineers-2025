@@ -13,6 +13,7 @@ from pid import PIDController
 from sys import argv
 from calib import calib_steering
 from util import is_blue
+from pixy import Pixy
 
 class Robot:
     def __init__(self):
@@ -39,6 +40,8 @@ class Robot:
 
         self.ultrasonic_weight = 0.5
         self.gyro_weight = 0.5 
+
+        self.pixy = Pixy(Port.S2, 0x54)
 
     def get_new_readings(self):
         left_distance = self.ultrasonic.read('US-DIST-CM')[0]
@@ -72,6 +75,8 @@ class Robot:
             else:
                 self.ultrasonic_weight = 0.5
 
+            block_color = self.pixy.get_largest_block()
+            # if b/s/ lock_color:
             self.handle_turning(left_distance)
             
             self.ld_prev = left_distance
