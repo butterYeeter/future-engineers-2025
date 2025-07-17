@@ -1,5 +1,7 @@
 #!/usr/bin/env pybricks-micropython
+from usb import USB
 from gyro import Gyro
+from color import ColorSensor
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import UltrasonicSensor, Motor
 from pybricks.iodevices import Ev3devSensor
@@ -14,8 +16,10 @@ from util import is_blue
 
 class Robot:
     def __init__(self):
-        self.gyro = Gyro()
-        self.gyro.init()
+        usb = USB()
+
+        self.gyro = Gyro(usb)
+        self.color = ColorSensor(usb)
 
         self.steer_motor = Motor(Port.C)
         self.drive_motor = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
@@ -27,8 +31,8 @@ class Robot:
         self.target_angle = self.gyro.get_angle()
         self.target_distance = 200
 
-        self.pid1 = PIDController(self.target_distance, 0.8, 0.01, 0.7, 35)
-        self.pid2 = PIDController(self.target_angle, 2.2, 0.02, 1.5, 35)
+        self.pid1 = PIDController(self.target_distance, 0.8, 0.01, 0.7, 35, 100)
+        self.pid2 = PIDController(self.target_angle, 2.2, 0.02, 1.5, 35, 5)
 
         self.turning = False
         self.cooldown = 0
