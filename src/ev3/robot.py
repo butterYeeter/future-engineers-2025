@@ -20,7 +20,7 @@ class Robot:
         usb = USB()
 
         self.gyro = Gyro(usb)
-        self.color = ColorSensor(usb)
+        self.color = ColorSensor(usb, (0.43, 0.34, 0.21))
 
         self.steer_motor = Motor(Port.C)
         self.drive_motor = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
@@ -49,6 +49,8 @@ class Robot:
         return left_distance, delta_angle 
 
     def start_turn(self):
+        if self.turning:
+            return
         self.turning = True
         self.cooldown = 150
         self.target_angle += 90
@@ -78,6 +80,11 @@ class Robot:
             block_color = self.pixy.get_largest_block()
             # if b/s/ lock_color:
             self.handle_turning(left_distance)
+
+            do_turn = is_blue(self.color.get_color_corrected())
+            if do_turn:
+                print(do_turn)
+                self.start_turn()
             
             self.ld_prev = left_distance
             correction = self.gyro_weight * self.pid2.loop(self.gyro.get_angle()) + self.ultrasonic_weight * -self.pid1.loop(left_distance)
