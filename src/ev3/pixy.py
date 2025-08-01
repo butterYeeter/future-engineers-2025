@@ -23,17 +23,22 @@ class Pixy(I2CDevice):
     self.write(0, setlamp)
     response = self.read(0, 10)
 
-
   def get_largest_signiture(self):
     cmd = bytes((174, 193, 32, 2, 255, 1))
     self.write(0, cmd)
 
     response = self.read(0, 20)
 
-    return int.from_bytes(response[6:8], 'little')
+    return {
+      "type":int.from_bytes(response[6:8], 'little'),
+      "cx":int.from_bytes(response[8:10], 'little'),
+      "cy":int.from_bytes(response[10:12], 'little'),
+      "w":int.from_bytes(response[12:14], 'little'),
+      "h":int.from_bytes(response[14:16], 'little'),
+    }
   
   def get_largest_block(self):
-    sig = self.get_largest_signiture()
+    sig = self.get_largest_signiture()["type"]
     return {1: "red", 2: "green"}.get(sig, None)
 
   def get_blocks(self, max_num):

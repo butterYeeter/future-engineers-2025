@@ -19,8 +19,9 @@ class Robot:
     def __init__(self):
         usb = USB()
 
+        # (0.43, 0.34, 0.21)
         self.gyro = Gyro(usb)
-        self.color = ColorSensor(usb, (0.43, 0.34, 0.21))
+        self.color = ColorSensor(usb, (0.4086021482944489, 0.3440860211849213, 0.2150537669658661))
 
         self.steer_motor = Motor(Port.C)
         self.drive_motor = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
@@ -68,7 +69,11 @@ class Robot:
                 self.ultrasonic_weight *= 0.8
 
     def drive(self):
-        self.drive_motor.dc(100)
+        self.drive_motor.dc(90)
+        # while True:
+        #     c = self.color.get_color()
+        #     print(c)
+
         while True:
             left_distance, delta_angle = self.get_new_readings()
 
@@ -77,17 +82,21 @@ class Robot:
             else:
                 self.ultrasonic_weight = 0.5
 
-            block_color = self.pixy.get_largest_block()
-            if block_color == "green":
-                self.target_distance = 150
-
             self.handle_turning(left_distance)
+
+            # block_color = self.pixy.get_largest_block()
+            # if block_color == "green":
+            #     print("Found a green block! moving into left lane")
+            #     self.target_distance = 150
+            #     self.pid1.set_target(self.target_distance)
 
             do_turn = is_blue(self.color.get_color_corrected())
             if do_turn:
-                print(do_turn)
                 self.start_turn()
             
             self.ld_prev = left_distance
+            # self.ultrasonic_weight = 0
             correction = self.gyro_weight * self.pid2.loop(self.gyro.get_angle()) + self.ultrasonic_weight * -self.pid1.loop(left_distance)
             self.steer_motor.track_target(correction)
+
+# JetBrainsMono NFM SemiBold, Consolas, 'Courier New', monospace

@@ -17,7 +17,7 @@ def get_values(num):
 def get_col():
   ser.write('c'.encode())
   val = struct.unpack("<fff", ser.read(12))
-  print(f"{val[0]:.2f}, {val[1]:.2f}, {val[2]:.2f}")
+  print(f"{val[0]:.8f}, {val[1]:.8f}, {val[2]:.8f}")
   time.sleep(0.1)
 
 while True:
