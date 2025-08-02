@@ -49,12 +49,12 @@ class Robot:
         delta_angle = abs(self.target_angle - self.gyro.get_angle())
         return left_distance, delta_angle 
 
-    def start_turn(self):
+    def start_turn(self, angle=90):
         if self.turning:
             return
         self.turning = True
         self.cooldown = 150
-        self.target_angle += 90
+        self.target_angle += angle
         self.pid2.set_target(self.target_angle)
 
     def handle_turning(self, left):
@@ -92,7 +92,10 @@ class Robot:
 
             do_turn = is_blue(self.color.get_color_corrected())
             if do_turn:
-                self.start_turn()
+                self.start_turn(angle=90)
+            do_turn = is_orange(self.color.get_color_corrected())
+            if do_turn:
+                self.start_turn(angle=-90)
             
             self.ld_prev = left_distance
             # self.ultrasonic_weight = 0

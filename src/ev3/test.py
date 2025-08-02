@@ -61,9 +61,9 @@ while True:
       dodging = True
       change = 30
 
-
   # if is_blue(color.get_color_corrected()):
   #   gpid.target += 90
+
   if dodging:
     dodging = False
     counter = 500

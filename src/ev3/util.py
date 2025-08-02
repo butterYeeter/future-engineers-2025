@@ -26,14 +26,21 @@ def rgb_to_hsv(rgb):
 
   return (h, s, v)
 
-def is_blue(rgb):
-  h, s, v = rgb_to_hsv(rgb)
+import enum
 
-  default_threshold = (200, 260, 40, 100, 40, 100)
-
-
-  h_min, h_max, s_min, s_max, v_min, v_max = default_threshold
+def is_color(h, s, v, thresh):
+  h_min, h_max, s_min, s_max, v_min, v_max = thresh
 
   return (h_min <= h <= h_max and
           s_min <= s <= s_max and
           v_min <= v <= v_max)
+
+def is_orange(rgb):
+  h, s, v = rgb_to_hsv(rgb)
+  default_threshold = (5, 50, 50, 15, 255, 255)
+  return is_color(h, s, v, default_threshold)
+
+def is_blue(rgb):
+  h, s, v = rgb_to_hsv(rgb)
+  default_threshold = (200, 260, 40, 100, 40, 100)
+  return is_color(h, s, v, default_threshold)
