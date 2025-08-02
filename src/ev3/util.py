@@ -26,7 +26,7 @@ def rgb_to_hsv(rgb):
 
   return (h, s, v)
 
-import enum
+# import enum
 
 def is_color(h, s, v, thresh):
   h_min, h_max, s_min, s_max, v_min, v_max = thresh
@@ -37,7 +37,7 @@ def is_color(h, s, v, thresh):
 
 def is_orange(rgb):
   h, s, v = rgb_to_hsv(rgb)
-  default_threshold = (5, 50, 50, 15, 255, 255)
+  default_threshold = (5, 50, 40, 100, 40, 100)
   return is_color(h, s, v, default_threshold)
 
 def is_blue(rgb):

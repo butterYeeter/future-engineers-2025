@@ -12,7 +12,7 @@ from math import cos, radians
 from pid import PIDController
 from sys import argv
 from calib import calib_steering
-from util import is_blue
+from util import is_blue, is_orange
 from pixy import Pixy
 
 class Robot:
@@ -21,7 +21,7 @@ class Robot:
 
         # (0.43, 0.34, 0.21)
         self.gyro = Gyro(usb)
-        self.color = ColorSensor(usb, (0.4086021482944489, 0.3440860211849213, 0.2150537669658661))
+        self.color = ColorSensor(usb, (0.44897959, 0.32653061, 0.20408164))
 
         self.steer_motor = Motor(Port.C)
         self.drive_motor = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
@@ -33,8 +33,8 @@ class Robot:
         self.target_angle = self.gyro.get_angle()
         self.target_distance = self.ultrasonic.read('US-DIST-CM')[0]
 
-        self.pid1 = PIDController(self.target_distance, 0.8, 0.01, 0.7, 35, 100)
-        self.pid2 = PIDController(self.target_angle, 2.2, 0.02, 1.5, 35, 5)
+        self.pid1 = PIDController(self.target_distance, 0.8, 0.01, 0.7, 42, 100)
+        self.pid2 = PIDController(self.target_angle, 2.2, 0.02, 1.5, 42, 5)
 
         self.turning = False
         self.cooldown = 0
@@ -43,6 +43,7 @@ class Robot:
         self.gyro_weight = 0.5 
 
         self.pixy = Pixy(Port.S2, 0x54)
+        self.num_turns = 0
 
     def get_new_readings(self):
         left_distance = self.ultrasonic.read('US-DIST-CM')[0]
@@ -56,6 +57,7 @@ class Robot:
         self.cooldown = 150
         self.target_angle += angle
         self.pid2.set_target(self.target_angle)
+        self.num_turns += 1
 
     def handle_turning(self, left):
         if self.turning:
@@ -69,12 +71,12 @@ class Robot:
                 self.ultrasonic_weight *= 0.8
 
     def drive(self):
-        self.drive_motor.dc(90)
+        self.drive_motor.dc(100)
         # while True:
         #     c = self.color.get_color()
         #     print(c)
 
-        while True:
+        while self.num_turns < 12:
             left_distance, delta_angle = self.get_new_readings()
 
             if delta_angle > 30:
