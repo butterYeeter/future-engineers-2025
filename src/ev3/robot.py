@@ -33,7 +33,7 @@ class Robot:
         self.target_angle = self.gyro.get_angle()
         self.target_distance = self.ultrasonic.read('US-DIST-CM')[0]
 
-        self.pid1 = PIDController(self.target_distance, 0.8, 0.01, 0.7, 42, 100)
+        self.pid1 = PIDController(self.target_distance, 0.8, 0.01, 0.7, 35, 100)
         self.pid2 = PIDController(self.target_angle, 2.2, 0.02, 1.5, 42, 5)
 
         self.turning = False
@@ -44,6 +44,8 @@ class Robot:
 
         self.pixy = Pixy(Port.S2, 0x54)
         self.num_turns = 0
+
+        self.log = DataLog("RGB", "HSV", "../log", timestamp=False)
 
     def get_new_readings(self):
         left_distance = self.ultrasonic.read('US-DIST-CM')[0]
@@ -71,7 +73,7 @@ class Robot:
                 self.ultrasonic_weight *= 0.8
 
     def drive(self):
-        self.drive_motor.dc(100)
+        self.drive_motor.dc(70)
         # while True:
         #     c = self.color.get_color()
         #     print(c)
@@ -91,12 +93,14 @@ class Robot:
             #     print("Found a green block! moving into left lane")
             #     self.target_distance = 150
             #     self.pid1.set_target(self.target_distance)
-
-            do_turn = is_blue(self.color.get_color_corrected())
+            color = self.color.get_color_corrected()
+            do_turn = is_blue(color, self.log)
             if do_turn:
+                print("blue turn")
                 self.start_turn(angle=90)
-            do_turn = is_orange(self.color.get_color_corrected())
+            do_turn = is_orange(color, self.log)
             if do_turn:
+                print("orange turn")
                 self.start_turn(angle=-90)
             
             self.ld_prev = left_distance

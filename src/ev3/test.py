@@ -33,6 +33,7 @@ log = DataLog("", name="../log", timestamp=False)
 
 drive_motor.run(600)
 dodging = False
+dodge_obstacle = 0
 change = 30
 counter = 0
 correction = 0
@@ -70,13 +71,18 @@ while True:
     prevtarg = gpid.target
     gpid.target = angle + change
     while counter > 0:
+      c = color.get_color_corrected()
+      if is_blue(c):
+        
+         
+
       counter -= 1
       if counter == 200:
         gpid.target = prevtarg
       
       correction = gpid.loop(gyro.get_angle())
       steer_motor.track_target(correction)
-      
+    
     # drive_motor.brake()
     # break
       
