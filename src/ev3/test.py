@@ -72,7 +72,7 @@ while True:
     gpid.target = angle + change
     while counter > 0:
       c = color.get_color_corrected()
-      if is_blue(c):
+      # if is_blue(c):
         
          
 

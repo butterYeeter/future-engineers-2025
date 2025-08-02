@@ -46,6 +46,7 @@ class Robot:
         self.num_turns = 0
 
         self.log = DataLog("RGB", "HSV", "../log", timestamp=False)
+        self.finish_cooldown = 0
 
     def get_new_readings(self):
         left_distance = self.ultrasonic.read('US-DIST-CM')[0]
@@ -73,12 +74,12 @@ class Robot:
                 self.ultrasonic_weight *= 0.8
 
     def drive(self):
-        self.drive_motor.dc(70)
+        self.drive_motor.dc(90)
         # while True:
         #     c = self.color.get_color()
         #     print(c)
 
-        while self.num_turns < 12:
+        while self.num_turns < 13:
             left_distance, delta_angle = self.get_new_readings()
 
             if delta_angle > 30:
@@ -102,7 +103,15 @@ class Robot:
             if do_turn:
                 print("orange turn")
                 self.start_turn(angle=-90)
-            
+
+            if self.num_turns == 11:
+                self.finish_cooldown = 150
+
+            if self.finish_cooldown > 0:
+                if self.finish_cooldown == 1:
+                    break 
+                self.finish_cooldown -= 1
+
             self.ld_prev = left_distance
             # self.ultrasonic_weight = 0
             correction = self.gyro_weight * self.pid2.loop(self.gyro.get_angle()) + self.ultrasonic_weight * -self.pid1.loop(left_distance)
