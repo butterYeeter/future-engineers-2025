@@ -47,7 +47,9 @@ class Robot:
 
         self.log = DataLog("RGB", "HSV", "../log", timestamp=False)
         self.finish_cooldown = 0
+
         self.parking_mode = True
+        self.parking_wall_counts = 0
 
     def get_new_readings(self):
         left_distance = self.ultrasonic.read('US-DIST-CM')[0]
@@ -122,11 +124,15 @@ class Robot:
             self.steer_motor.track_target(correction)
         
         self.drive_motor.brake()
-        self.drive_motor.dc(30)
+        self.drive_motor.dc(60)
         while self.parking_mode:
             left_distance, delta_angle = self.get_new_readings()
             delta_distance = abs(self.ld_prev - left_distance)
             if delta_distance > 100:
+                self.parking_wall_counts += 1
+            if self.parking_wall_counts >= 2:
                 self.drive_motor.brake()
+                self.drive_motor.dc(-60)
             self.ld_prev = left_distance
+
 # JetBrainsMono NFM SemiBold, Consolas, 'Courier New', monospace
