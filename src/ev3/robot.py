@@ -130,8 +130,9 @@ class Robot:
             delta_distance = abs(self.ld_prev - left_distance)
             if delta_distance > 100:
                 self.parking_wall_counts += 1
-            if self.parking_wall_counts >= 2:
+            if self.parking_wall_counts >= 4:
                 self.drive_motor.brake()
+                self.steer_motor.track_target(40)
                 self.drive_motor.dc(-60)
             self.ld_prev = left_distance
 
