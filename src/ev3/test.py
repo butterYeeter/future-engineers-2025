@@ -1,10 +1,10 @@
 #!/usr/bin/env pybricks-micropython
 from pixy import Pixy
-from usb import USB
 from color import ColorSensor
 from gyro import Gyro
 from pid import PIDController
 from pybricks.ev3devices import Motor
+from pybricks.iodevices import UARTDevice
 from pybricks.parameters import Port
 from calib import calib_steering
 from util import is_blue
@@ -16,9 +16,10 @@ drive_motor = Motor(Port.B)
 pid = PIDController(target=316//2, Kp=0.5, Kd=0.3, output_limit=30)
 pixy = Pixy(Port.S2, 0x54)
 
-usb = USB()
-color = ColorSensor(usb, (0.43243244, 0.32432431, 0.21621622))
-gyro = Gyro(usb)
+pico_uart = UARTDevice(Port.S3, 115200)
+pico_uart.clear()
+color = ColorSensor(pico_uart, (0.43243244, 0.32432431, 0.21621622))
+gyro = Gyro(pico_uart)
 target_angle = gyro.get_angle()
 gpid = PIDController(target_angle, 2.2, 0.02, 1.5, 32, 5)
 

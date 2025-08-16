@@ -1,10 +1,9 @@
 #!/usr/bin/env pybricks-micropython
-from usb import USB
 from gyro import Gyro
 from color import ColorSensor
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import UltrasonicSensor, Motor
-from pybricks.iodevices import Ev3devSensor
+from pybricks.iodevices import Ev3devSensor, UARTDevice
 from pybricks.parameters import Port, Direction, Button
 from pybricks.tools import DataLog, StopWatch, wait
 import utime
@@ -15,13 +14,18 @@ from calib import calib_steering
 from util import is_blue, is_orange
 from pixy import Pixy
 
+LEFT_US_PORT = Port.S1
+PIXY_PORT = Port.S2
+PICO_PORT = Port.S3
+PICO_BAUD = 115200
+
 class Robot:
     def __init__(self):
-        usb = USB()
+        pico_uart = UARTDevice(PICO_PORT, PICO_BAUD)
+        pico_uart.clear()
 
-        # (0.43, 0.34, 0.21)
-        self.gyro = Gyro(usb)
-        self.color = ColorSensor(usb, (0.44897959, 0.32653061, 0.20408164))
+        self.gyro = Gyro(pico_uart)
+        self.color = ColorSensor(pico_uart, (0.44897959, 0.32653061, 0.20408164))
 
         self.steer_motor = Motor(Port.C)
         self.drive_motor = Motor(Port.B, positive_direction=Direction.CLOCKWISE)
@@ -135,5 +139,3 @@ class Robot:
                 self.steer_motor.track_target(40)
                 self.drive_motor.dc(-60)
             self.ld_prev = left_distance
-
-# JetBrainsMono NFM SemiBold, Consolas, 'Courier New', monospace
