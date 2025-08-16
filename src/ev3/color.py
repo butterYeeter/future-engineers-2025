@@ -1,15 +1,17 @@
 import ustruct
+from pybricks.iodevices import UARTDevice
+
+COLOR_VECTOR_LENGTH=12
 
 class ColorSensor():
-  def __init__(self, usb, white=None):
-    self.usb = usb
+  def __init__(self, uart: UARTDevice, white=None):
+    self.uart = uart
     self.white = white or (0.28571430, 0.28571430, 0.42857143)
 
   def get_color(self):
-    self.usb.write_bytes(b'c', 1)
+    self.uart.write(b'c')
 
-    buffer = bytearray(12)
-    self.usb.read_bytes(buffer, len(buffer))
+    buffer = self.uart.read(length=COLOR_VECTOR_LENGTH)
     color = ustruct.unpack('fff', buffer)
 
     return color
