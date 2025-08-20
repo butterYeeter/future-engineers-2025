@@ -1,5 +1,15 @@
-from pybricks.tools import DataLog
+from pybricks.ev3devices import Motor
 
+BLUE = 1
+ORANGE = 2
+
+def calib_steering(m: Motor):
+  angle_right = m.run_until_stalled(540, duty_limit=70)
+  angle_left = m.run_until_stalled(-540, duty_limit=70)
+  m.run_target(90, (angle_left + angle_right)/2)
+  m.reset_angle(0)
+
+@micropython.native
 def rgb_to_hsv(rgb):
   r_norm, g_norm, b_norm = rgb
 
@@ -28,7 +38,6 @@ def rgb_to_hsv(rgb):
 
   return (h, s, v)
 
-# import enum
 
 def is_color(h, s, v, thresh):
   h_min, h_max, s_min, s_max, v_min, v_max = thresh
@@ -37,14 +46,27 @@ def is_color(h, s, v, thresh):
           s_min <= s <= s_max and
           v_min <= v <= v_max)
 
-def is_orange(rgb, log: DataLog):
-  h, s, v = rgb_to_hsv(rgb)
-  default_threshold = (0, 50, 40, 100, 40, 100)
-  # log.log(rgb, (h,s,v))
+def is_orange(h, s, v):
+  threshold_one = (0, 40, 30, 100, 30, 100)
+  threshold_two = (340, 360, 30, 100, 30, 100)
+  return is_color(h, s, v, threshold_one) or is_color(h, s, v, threshold_two)
+
+def is_blue(h, s, v):
+  default_threshold = (200, 260, 30, 100, 30, 100)
   return is_color(h, s, v, default_threshold)
 
-def is_blue(rgb, log: DataLog):
+def get_color(rgb):
   h, s, v = rgb_to_hsv(rgb)
-  default_threshold = (200, 260, 40, 100, 40, 100)
-  # log.log(rgb, (h,s,v))
-  return is_color(h, s, v, default_threshold)
+
+  if is_blue(h, s, v):
+    return BLUE
+  elif is_orange(h, s, v):
+    return ORANGE
+  
+  return 0
+
+def distance_to_angle(dist_mm: int):
+  wheel_diameter = 56   # Wheel has 56 mm diameter
+  PI = 3.1415926535   # PI
+  gear_ratio = 1.4    # Gear ratio of our drive motor to wheels is 1.4:1
+  return int(dist_mm / (wheel_diameter * PI) * gear_ratio * 360)

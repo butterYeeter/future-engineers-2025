@@ -10,10 +10,10 @@ from calib import calib_steering
 from util import is_blue
 from pybricks.tools import DataLog
 
-steer_motor = Motor(Port.C)
+steer_motor = Motor(Port.D)
 drive_motor = Motor(Port.B)
 
-pid = PIDController(target=316//2, Kp=0.5, Kd=0.3, output_limit=30)
+pid = PIDController(target=316//2, Kp=0.1, Kd=0.05, output_limit=30)
 pixy = Pixy(Port.S2, 0x54)
 
 pico_uart = UARTDevice(Port.S3, 115200)
@@ -32,7 +32,7 @@ print("Area is {}".format(area))
 
 log = DataLog("", name="../log", timestamp=False)
 
-drive_motor.run(600)
+drive_motor.run(1500)
 dodging = False
 dodge_obstacle = 0
 change = 30
@@ -68,17 +68,18 @@ while True:
 
   if dodging:
     dodging = False
-    counter = 500
+    counter = 70
     prevtarg = gpid.target
     gpid.target = angle + change
     while counter > 0:
       c = color.get_color_corrected()
       # if is_blue(c):
+      print(counter)
         
          
 
       counter -= 1
-      if counter == 200:
+      if counter == 30:
         gpid.target = prevtarg
       
       correction = gpid.loop(gyro.get_angle())
