@@ -3,7 +3,7 @@
 ## Introduction
 This repository contains the source code and documentation for our team’s entry into the **World Robot Olympiad (WRO) 2025 – Future Engineers: Self-Driving Cars** category. The project showcases our engineering design process, code development, and vehicle implementation, in line with the competition requirements.
 
-Our self-driving vehicle is designed to complete the **Open Challenge** and **Obstacle Challenge** fully autonomously, while meeting the engineering documentation standards specified in the [WRO 2025 General Rules](https://wro-association.org/competition/questions-answers/).
+Our self-driving vehicle is designed to complete the **Open Challenge** and **Obstacle Challenge** fully autonomously, while meeting the engineering documentation standards specified in the [WRO 2025 General Rules](https://wro-association.org/wp-content/uploads/WRO-2025-Future-Engineers-Self-Driving-Cars-General-Rules.pdf).
 
 ---
 
