@@ -33,3 +33,16 @@ class ColorSensor():
     norm = [c/max_component for c in col]
 
     return norm
+  
+  # Use the pico to get the detected color instead
+  def get_detected(self):
+    self.uart.write(b'd')
+
+    buffer = self.uart.read(length=4)
+    detected = ustruct.unpack('<i', buffer)[0]
+
+    return detected
+  
+  # Tell the pico to reset its detected color
+  def reset_detected(self):
+    self.uart.write(b'e')

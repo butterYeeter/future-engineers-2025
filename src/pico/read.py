@@ -20,6 +20,18 @@ def get_col():
   print(f"{val[0]:.8f}, {val[1]:.8f}, {val[2]:.8f}")
   time.sleep(0.1)
 
+def get_det():
+  ser.write('d'.encode())
+  # print(ser.readline())
+  data = ser.read(4)
+  val = struct.unpack("<i", data)[0]
+  ser.write('e'.encode())
+  print(f"DATA: {data}, DETECTED COLOR: {val}")
+
+
+
 while True:
-  get_col()
+  # get_col()
+  get_det()
+  time.sleep(0.5)
   # get_values(1)

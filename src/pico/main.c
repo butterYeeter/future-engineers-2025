@@ -5,16 +5,21 @@
 // #include "qmc5883.h"
 #include "tcs34725.h"
 #include "math.h"
+#include "util.h"
 
 #define GET_ANGLE 'a'
 #define CALIBRATE 'g'
 #define RESET_ANGLE 'r'
 #define GET_COLOR 'c'
+#define GET_DETECTED 'd'
+#define RESET_DETECTED 'e'
 
 float bi[] = {-43.924241, 12.448210, -73.133957};
 float A[3][3] = {{1.096529, -0.033064, -0.055229},
                 {-0.033064, 0.989653, -0.120042},
                 {-0.055229, -0.120042, 0.819875}};
+
+float white_reference[] = {0.442, 0.327, 0.231};
 
 void apply_calib(float buf[3]) {
     float tmp[3] = {buf[0] - bi[0], buf[1] - bi[1], buf[2] - bi[2]};
@@ -70,7 +75,9 @@ int main()
     float angle = 0.0f;         // Integrated angle using gyro
     float gyro_prev = 0.0f;     // Previous value for apply low pass filter
     float RC = 0.000265f;       // Filter out noise above ~600HZ
-    float color[3];
+    // float color[3];
+    volatile int32_t detected_color = COLOR_UNKNOWN;
+    bool reset_detected = true;
     while (true) {
         float buf[7];
         mpu6050_read_float(buf);
@@ -80,9 +87,20 @@ int main()
         float delta_time = (float)(current_time - last_time)/1000000;
         last_time = current_time;
         
-        if (tcs_data_available()) {
-            tcs_get_rgb(color);
-        }
+        // if (tcs_data_available()) {
+        //     tcs_get_rgb(color);
+        // }
+        float reg[3];
+        tcs_get_rgb(reg);
+        // printf("COL: %.3f, %.3f, %.3f\n", reg[0], reg[1], reg[2]);
+        // printf("DETECTED: %d\n", detected_color);
+        detected_color = (reset_detected == true) ? detect_color(reg, white_reference) : detected_color;
+        if (detected_color != COLOR_UNKNOWN)
+            reset_detected = false;
+
+        // detected = detect_color(rgb, white_reference);
+        // printf("%d\n", detected);
+
         
         // int16_t raw[3];
         // qmc5883_raw_data(raw);
@@ -101,9 +119,13 @@ int main()
         switch (c) {
             case GET_ANGLE:
                 stdio_put_string((char*)&angle, sizeof(float), false, false);
-                // printf("ANGLE: %6f\n", angle);
                 bool state = gpio_get(25);
                 gpio_put(25, state ^ true);
+                break;
+            case GET_DETECTED:
+                int32_t temp = detected_color;
+                // printf("DETECTED %d\n", temp);
+                stdio_put_string((char*)&temp, sizeof(int32_t), false, false);
                 break;
             case CALIBRATE:
                 uint8_t num_samples = getchar_timeout_us(100);
@@ -116,7 +138,10 @@ int main()
                 float rgb[3];
                 tcs_get_rgb(rgb);
                 stdio_put_string((char*)rgb, 12, false, false);
-                // printf("R: %6f, G: %6f, B: %6f\n", rgb[0], rgb[1], rgb[2]);
+                break;
+            case RESET_DETECTED:
+                // detected_color = COLOR_UNKNOWN;
+                reset_detected = true;
                 break;
         }
 
