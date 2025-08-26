@@ -43,9 +43,18 @@ class Pixy(I2CDevice):
       "h":int.from_bytes(response[14:16], 'little'),
     }
   
+  # def get_largest_block(self):
+  #   sig = self.get_largest_signiture()["type"]
+  #   return {1: "red", 2: "green"}.get(sig, None)
   def get_largest_block(self):
-    sig = self.get_largest_signiture()["type"]
-    return {1: "red", 2: "green"}.get(sig, None)
+    data = self.get_largest_signiture()
+    sig = data["type"]
+    if sig in (1, 2):  # known obstacle colors
+      # data["signature"] = sig
+      # data["color"] = {1: "red", 2: "green"}[sig]
+      return data
+    return None
+
 
   # Function that returns upto max_num blocks
   def get_blocks(self, max_num):

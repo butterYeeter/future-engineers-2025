@@ -18,6 +18,7 @@ class PIDController:
 
     # Function that gets called every loop interation to update our controller state,
     # and output a correction
+    @micropython.native
     def loop(self, current_value):
         # Calculate new state(error, integral, derivative)
         error = self.target - current_value

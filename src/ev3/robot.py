@@ -8,7 +8,6 @@ from pybricks.hubs import EV3Brick
 from pybricks.parameters import Port, Direction
 from pybricks.tools import DataLog
 from pid import PIDController
-from calib import calib_steering
 from util import *
 
 # PARAMETERS
@@ -121,9 +120,15 @@ class Robot:
             if detected_color == BLUE:
                 print("Turning left...")
                 self.start_turn(LEFT)
+                # self.color.reset_detected()
             elif detected_color == ORANGE:
                 print("Turning RIGHT")
                 self.start_turn(RIGHT)
+                # self.color.reset_detected()
+            # if is_orange(rgb_to_hsv(color)):
+            #     self.start_turn(RIGHT)
+            # elif is_blue(rgb_to_hsv(color)):
+            #     self.start_turn(LEFT)
 
             # Break out of the loop once we've completed the final turn
             if self.num_turns == NUM_ROUNDS * 4 and self.turning == False:
