@@ -1,4 +1,7 @@
 from pybricks.ev3devices import Motor
+from pybricks.hubs import EV3Brick
+from pybricks.parameters import Button
+from pybricks.tools import wait
 
 BLUE = 1
 ORANGE = 2
@@ -70,3 +73,8 @@ def distance_to_angle(dist_mm: int):
   PI = 3.1415926535   # PI
   gear_ratio = 1.4    # Gear ratio of our drive motor to wheels is 1.4:1
   return int(dist_mm / (wheel_diameter * PI) * gear_ratio * 360)
+
+def wait_for_start():
+  brick = EV3Brick()
+  while not (Button.CENTER in brick.buttons.pressed()):
+    wait(200)

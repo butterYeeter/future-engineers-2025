@@ -13,13 +13,17 @@
 #define GET_COLOR 'c'
 #define GET_DETECTED 'd'
 #define RESET_DETECTED 'e'
+#define LAMP_ON 'l'
+#define LAMP_OFF 'o'
+
+#define LAMP_PIN 20
 
 float bi[] = {-43.924241, 12.448210, -73.133957};
 float A[3][3] = {{1.096529, -0.033064, -0.055229},
                 {-0.033064, 0.989653, -0.120042},
                 {-0.055229, -0.120042, 0.819875}};
 
-float white_reference[] = {0.442, 0.327, 0.231};
+float white_reference[] = {0.5, 0.3571428656578064, 0.2142857164144516};
 
 void apply_calib(float buf[3]) {
     float tmp[3] = {buf[0] - bi[0], buf[1] - bi[1], buf[2] - bi[2]};
@@ -51,6 +55,9 @@ int main()
     gpio_set_dir(25, GPIO_OUT);
     gpio_init(15);
     gpio_set_dir(15, GPIO_OUT);
+    gpio_init(LAMP_PIN);
+    gpio_set_dir(LAMP_PIN, GPIO_OUT);
+    gpio_put(LAMP_PIN, true);
 
     gpio_init(TCS_INT);
     gpio_set_dir(TCS_INT, GPIO_IN);
@@ -142,6 +149,13 @@ int main()
             case RESET_DETECTED:
                 // detected_color = COLOR_UNKNOWN;
                 reset_detected = true;
+                break;
+
+            case LAMP_ON:
+                gpio_put(LAMP_PIN, true);
+                break;
+            case LAMP_OFF:
+                gpio_put(LAMP_PIN, false);
                 break;
         }
 

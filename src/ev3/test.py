@@ -96,43 +96,56 @@ def set_steer(target_deg):
 
 #turn_to_angle(30, "left")
 #turn_to_angle(30, "right", -50)
+def parallel_park(straight_angle):
+  wall_counter = 0
+  upid.target = 270
+  drive_motor.dc(60)
+  last_dist = right_us.distance()
+  last_angle = gyro.get_angle()
+  gyro_weight = 0.5
+  us_weight = 0.5
+  while wall_counter < 2:
+    dist = right_us.distance()
+    delta_dist = abs(dist - last_dist)
+    last_dist = dist
 
-wall_counter = 0
-upid.target = 270
-drive_motor.dc(60)
-last_dist = right_us.distance()
-last_angle = gyro.get_angle()
-gyro_weight = 0.7
-us_weight = 0.3
-while wall_counter < 4:
-  dist = right_us.distance()
-  delta_dist = abs(dist - last_dist)
-  last_dist = dist
+    angle = gyro.get_angle()
+    delta_angle = abs(angle - straight_angle)
+    last_angle = angle
 
-  angle = gyro.get_angle()
-  delta_angle = abs(angle - last_angle)
-  last_angle = angle
+    # us_weight = 0.6
+    # gyro_weight = 0.4
+    if delta_angle > 37:
+      us_weight = 0
+      gyro_weight = 1
+    else:
+      us_weight = 0.5
+      gyro_weight = 0.5
 
-  if delta_angle > 30:
-    us_weight = 0
-    gyro_weight = 1
-  else:
-    us_weight = 0.3
-    gyro_weight = 0.7
+    if delta_dist > 150 and abs(dist - upid.target) < 50:
+      us_weight *= 0.5
+      wall_counter += 1
+      print("Wall")
 
-  if delta_dist > 150:
-    us_weight *= 0.5
-    wall_counter += 1
-    print("Wall")
-
-  correction = us_weight * upid.loop(dist) + gyro_weight * gpid.loop(angle)
-  set_steer(correction)
-  print("Dist: {}".format(delta_dist))
-drive_motor.hold()
-
-turn_to_angle(60, "Right", -80)
+    correction = us_weight * upid.loop(dist) + gyro_weight * gpid.loop(angle)
+    set_steer(correction)
+  drive_motor.hold()
 
 
-turn_to_angle(60, "left", -80)
-# set_steer(0)
-steer_motor.run_target(1000, 0)
+  steer_motor.run_target(1000, 0)
+  drive_motor.run_angle(1000, distance_to_angle(50))
+  # motor_angle = drive_motor.angle() + distance_to_angle(50)
+  # while drive_motor.angle() < motor_angle:
+    # angle = gyro.get_angle()
+    # correction = gpid.loop(angle)
+    # steer_motor.run_target(1000, correction, wait=False)
+
+  turn_to_angle(60, "Right", -80)
+
+  turn_to_angle(45, "left", -80, compensation=3)
+  turn_to_angle(15,"right", compensation=3)
+  steer_motor.run_target(1000, 0)
+
+# turn_to_angle(15,"rift", -50, compensation=3)
+# turn_to_angle(45, "light", 80)
+# turn_to_angle(60, "reft", 80)

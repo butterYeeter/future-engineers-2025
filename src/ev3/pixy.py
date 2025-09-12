@@ -1,5 +1,10 @@
 from pybricks.iodevices import I2CDevice
 
+RED_SIG = 1
+GREEN_SIG = 4
+
+SIGNITURES = (RED_SIG, GREEN_SIG)
+
 # Class for communicating with pixy cam over i2c
 class Pixy(I2CDevice):
   def __init__(self, port, address):
@@ -49,7 +54,7 @@ class Pixy(I2CDevice):
   def get_largest_block(self):
     data = self.get_largest_signiture()
     sig = data["type"]
-    if sig in (1, 2):  # known obstacle colors
+    if sig in SIGNITURES:  # known obstacle colors
       # data["signature"] = sig
       # data["color"] = {1: "red", 2: "green"}[sig]
       return data

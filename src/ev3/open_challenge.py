@@ -33,6 +33,7 @@ drive_motor = Motor(Port.B)
 steer_motor = Motor(Port.D)
 calib_steering(steer_motor)
 
+wait_for_start()
 
 us_weight = US_WEIGHT
 gyro_weight = GYRO_WEIGHT
@@ -81,7 +82,7 @@ drive_motor.dc(90)
 last_dist = right_us.distance() - left_us.distance()
 last_time = timer.time()
 delta_angle = 0
-while not (turns >= 1 and delta_angle < 5):
+while not (turns >= 12 and delta_angle < 5):
   angle = gyro_sensor.get_angle()
   delta_angle = abs(angle-gpid.target)
   dist = right_us.distance() - left_us.distance()
@@ -90,7 +91,7 @@ while not (turns >= 1 and delta_angle < 5):
 
   if delta_angle > 30 or colors % 2 == 1:
     us_weight = 0
-    gyro_weight = 0.5
+    gyro_weight = 1
   else:
     us_weight = US_WEIGHT
     gyro_weight = GYRO_WEIGHT
@@ -115,7 +116,7 @@ while not (turns >= 1 and delta_angle < 5):
       last_time = time
       if colors % 2 == 0:
         turns += 1
-    elif dt > 1000 and colors % 2 == 1:
+    elif dt > 1500 and colors % 2 == 1:
       colors+=1
       gpid.target += dir_change
       last_time = time
