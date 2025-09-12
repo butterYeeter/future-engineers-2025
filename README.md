@@ -48,7 +48,7 @@
 
 ### 🛠️ [Chassis Design](#-contents)
 
-Our robot design consist mostly of original LEGO parts from the EV3 set, in addition to an external Raspberry Pi Pico microcontroller and other electronic sensors. The build instructions for the lego part of the build can be found [here]()
+Our robot design consist mostly of original LEGO parts from the EV3 set, in addition to an external Raspberry Pi Pico microcontroller and other electronic sensors. The build instructions for the lego part of the build can be found [here]([other/Huebert%20v1%20Build%20Instructions.pdf](https://github.com/butterYeeter/future-engineers-2025/blob/master/other/Huebert%20v1%20Build%20Instructions.pdf))
 
 - **Design Approach:**
     From prior experience, we wanted to have a small and highly manouverable robot. We started off by listing some requirements. This included minizmizing the wheelbase and trackwidth, making the chasis compact and having sharp turning.
@@ -126,3 +126,115 @@ The pico then has it's own regulated 3.3V output that it supply's to the IMU and
     We use a combination of LEGO cables and custom cables with RJ12 ports to integrate with the EV3 brick.
 - **Monitoring Features:**
     The EV3 screen displays the current battery voltage so we know when it needs to be replaced and recharged.
+### 👀 [Sense Management](#-contents)
+
+- **Sensors Used(click for buy link):**
+    |Sensor|Quantity|Image|
+    |:---|:---:|:---:|
+    [LEGO mindstorms ultrasonic sensor](https://www.bricklink.com/v2/catalog/catalogitem.page?S=45504-1#T=S&O={%22iconly%22:0}) | 2 |![LEGO Mindsorms Ultrasonic Sensor](https://img.bricklink.com/ItemImage/SN/0/45504-1.png)
+    [TCS34725 color sensor](https://www.robotics.org.za/AF1334?search=TCS34725)              | 1 |![TCS34725 Color Sensor](https://www.robotics.org.za/image/cache/wp/gj/adafruit/AF1334/1334-04-650x350.webp)
+    [Pixycam 2.1](https://tribotix.com/product/pixycam2-1/)                        | 1 |![Pixycam 2.1](https://tribotix.com/wp-content/uploads/2021/06/pixy_v2.1-e1622991190900.jpeg)
+    [MPU 6050 inertial measurement unit](https://www.robotics.org.za/GY-521) | 1 |![MPU 6050](https://www.robotics.org.za/image/cache/wp/gj/generic/GY-521/GY-521-001-500x500.webp)
+    [Built-in rotary encoders of the LEGO medium motors](https://www.bricklink.com/v2/catalog/catalogitem.page?S=45503-1#T=S&O={%22iconly%22:0})|2|![LEGO Medium Motor](https://img.bricklink.com/ItemImage/SN/0/45503-1.png)
+- **Purpose of Each Sensor:**
+    The ultrasonics are used to recenter the robot within each straight section on the mat
+    
+    The color sensor is used to detect the colored lines on the mat to decide when to turn
+    
+    A pixy cam is used to detect traffic objects in the obstacle challenge
+    
+    The IMU is used to track the robot's absolute angle during the run
+    
+    The motor's rotary encoders are used to drive specific distances based on rotations of the drive motor as well as turn the steering to specidfic angles
+
+- **Circuitry**
+    The Pixy cam as well as the ultrasonic sensors are connected directly to the EV3 brick via its sensor input ports. The EV3 receives information about detected lines and absolute angle via the Rapberry Pi Pico which is connected on another input port.
+    
+    ### Wiring diagram of EV3 brick and sensors
+    ![Main wiring diagram of robot](other/images/ev3wiring.png)
+    
+
+    The Raspberry Pi Pico handles detected colored lines and integrating angular velocity to get absolute angle. The following wiring diagram shows
+    how the pico and its sensors receive power
+    
+    ### Wiring diagram of Rapberry Pi Pico and sensors
+    ![Wiring diagram of sensor board](other/images/picowiring.png)
+
+---
+
+## 🚧 [Obstacle Management](#-contents)
+
+### 🎯 [Detection Method](#-contents)
+
+- **Camera / Sensor Used:**
+- **Coordinate Processing:**
+
+
+### 🅿️ [Parking](#-contents)
+(TBD)
+- **Parking Detection:**
+- **Parking Steps:**
+
+---
+
+## 📸 [Pictures](#-contents)
+
+### 🤖 [Robot Photos](#-contents)
+Here are pictures of our robot, HueBert:
+
+**Top View:**
+![Top view of robot](v-photos/top.jpg)
+
+**Front View**
+![Front view of robot](v-photos/front.jpg)
+
+**Rigth Side View**
+![Right side view of robot](v-photos/right_side.jpg)
+
+**Left Side View**
+![Left side view of robot](v-photos/left_side.jpg)
+
+**Rear View**
+![Rear view of robot](v-photos/back.jpg)
+
+**Bottom View**
+![Bottom view of robot](v-photos/bottom.jpg)
+
+
+### 👥 [Team Photos](#-contents)
+
+*(Insert images or links)*
+
+---
+
+## 🎥 [Performance Videos](#-contents)
+
+- **Open Challenge:**
+- **Obstacle Challenge:**
+- **Parts Discussion:**
+
+---
+
+## 💻 [Code Explanation](#-contents)
+
+- **Programming Language / Platform:**
+- **Main Logic Flow:**
+- **Parallel Processes / Threads:**
+
+`Code is Cool`
+
+---
+
+## 📝 [Conclusion](#-contents)
+
+### ⚠️ [Limitations](#-contents)
+
+- **Mobility:**
+- **Power & Sense:**
+- **Obstacle Management:**
+
+### 💡 [Suggestions for Further Development](#-contents)
+
+- **Hardware Upgrades:**
+- **Software Improvements:**
+- **Sensor Enhancements:**
