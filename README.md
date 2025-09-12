@@ -83,10 +83,7 @@ We used a pixy cam v2 that does obstacle detection for us.
     We opted to position the camera on the front of the robot. It was mostly for our convenience in mounting it on the robot where there was space, but we later found it to make our lives more difficult in coding. A future improvement would be to take the angle and position of the camera into account to optimize usage of that glorious 80 degree field of view.
     
 ### 🚦 [Color Sensor Position](#-contents)
-We used a TCS34725 color sensor board for detecting colors on the mat.
-
-- **Positioning:**
-    The position of the color sensor was carefully determined to maximize the accuracy of the detected colors. To achieve this we placed the color sensor at a specific height above the mat and centered it in the middle of the steering mechanism by designing a custom LEGO compatible mount. This resulted in accurate readings  
+   We used a TCS34725 color sensor board for detecting colors on the mat. The position of the color sensor was carefully determined to maximize the accuracy of the detected colors. To achieve this we placed the color sensor at a specific height above the mat and centered it in the middle of the steering mechanism by designing a custom LEGO compatible mount. This resulted in accurate readings  
 
 ### 🧭 [Gyro Sensor Position](#-contents) Componente positions
 
