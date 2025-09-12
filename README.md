@@ -65,13 +65,13 @@ We used a pixy cam v2 that does obstacle detection for us.
     The position we opted for was mostly for our convenience in mounting it on the robot where there was space, but we later found it to make our lives more difficult in coding. A future improvement would be to take the angle and position of the camera into account to optimize usage of that glorious 80 degree field of view.
     
 - **Reasoning:**
-    Using the pixy removed the need for us to do the computer vision for tracking obstacles our selves. The pixy also provides a convenient interface over I2C to get the objects that it has tracked. We simply configure the camera on a pc to get it to track red and green traffic lights.
+    Using the pixy removed the need for us to do the computer vision for tracking obstacles ourselves. The pixy also provides a convenient interface over I2C to get the objects that it is tracking. We simply configure the camera on a pc via PixyMon to get it to track red and green traffic lights.
 
 ### 🧭 [Gyro Sensor & Turns](#-contents)
-The gyro proved to be and incredibly important sensor for our robot. Initially one of the EV3 gyro sensors was used. However we quickly ran into issues. One issue was that it highly unreliable. The LEGO gyro tends to drift overtime. Another issue was that the gyro didn't have a high angular resolution.
+The gyro proved to be and incredibly important sensor for our robot. Initially one of the EV3 gyro sensors were used, however we quickly ran into issues. One issue was that it is highly unreliable. The LEGO gyro tends to drift over time. Another issue was that the gyro didn't have a high angular resolution.
 
 - **Sensor Used:**
-    To fix this, we used an MPU6050 IMU with our raspberry pi. The MPU6050 has a much higher angular resolution and polling rate. The raspberry pi polls the MPU as fast as possible(the maximum rate is 8000 Hz). 
+    To fix this, we used an MPU6050 IMU with our raspberry pi pico. The MPU6050 has a much higher angular resolution and polling rate. The raspberry pi polls the MPU as fast as possible(the maximum rate is 8000 Hz). 
 
 - **Control Algorithm:**
     The MPU returns angular velocity which we then integrate numerically to get absolute. We also pass the raw gyro data through a dynamic low pass filter which filters out noise above ~600 Hz. The absolute angle is passed to a PID controller on the EV3.
@@ -114,16 +114,22 @@ We use the gyro controller to drive in a direction, using the gyro PID controlle
 ## 🔋 [Power & Sense Management](#-contents)
 
 ### 🔌 [Power Management](#-contents)
-To power our robot, we use a LEGO Li-on battery pack that powers the EV3. All of the LEGO sensors and motors receive power via the ports of the EV3. The raspberry pi, is also connected to the EV3 via one of its ports. This port provides power to the pico.(Wiring diagram of ev3)
+To power our robot, we use a LEGO Li-on battery pack that powers the EV3. All of the LEGO sensors and motors receive power via the ports of the EV3. The Raspberry Pi Pico, is also connected to the EV3 via one of its ports. This port provides power to the Pico. All of the devices connected to the input ports receive +5V while the motors recieve up to +9V.
+
+#### **Power Diagram of EV3**
+![Power distribution](other/images/powerdistribution.svg)
+
 
 The pico then has it's own regulated 3.3V output that it supply's to the IMU and color sensor. (Wiring diagram for pico and sensors)
 
 - **Core Controller:**
     LEGO EV3
+- **Secondary Controller:**
+    Raspberry Pi Pico
 - **Battery Type:**
-    LEGO 2050mAh 7.4V Li-ion battery pack
+    LEGO 2200mAh 7.4V Li-ion battery pack
 - **Energy Distribution:**
-    We use a combination of LEGO cables and custom cables with RJ12 ports to integrate with the EV3 brick.
+    We use a combination of LEGO cables and custom cables with RJ12 ports to integrate the pi and other sensors with the EV3 brick.
 - **Monitoring Features:**
     The EV3 screen displays the current battery voltage so we know when it needs to be replaced and recharged.
 ### 👀 [Sense Management](#-contents)
@@ -131,33 +137,33 @@ The pico then has it's own regulated 3.3V output that it supply's to the IMU and
 - **Sensors Used(click for buy link):**
     |Sensor|Quantity|Image|
     |:---|:---:|:---:|
-    [LEGO mindstorms ultrasonic sensor](https://www.bricklink.com/v2/catalog/catalogitem.page?S=45504-1#T=S&O={%22iconly%22:0}) | 2 |![LEGO Mindsorms Ultrasonic Sensor](https://img.bricklink.com/ItemImage/SN/0/45504-1.png)
-    [TCS34725 color sensor](https://www.robotics.org.za/AF1334?search=TCS34725)              | 1 |![TCS34725 Color Sensor](https://www.robotics.org.za/image/cache/wp/gj/adafruit/AF1334/1334-04-650x350.webp)
-    [Pixycam 2.1](https://tribotix.com/product/pixycam2-1/)                        | 1 |![Pixycam 2.1](https://tribotix.com/wp-content/uploads/2021/06/pixy_v2.1-e1622991190900.jpeg)
-    [MPU 6050 inertial measurement unit](https://www.robotics.org.za/GY-521) | 1 |![MPU 6050](https://www.robotics.org.za/image/cache/wp/gj/generic/GY-521/GY-521-001-500x500.webp)
-    [Built-in rotary encoders of the LEGO medium motors](https://www.bricklink.com/v2/catalog/catalogitem.page?S=45503-1#T=S&O={%22iconly%22:0})|2|![LEGO Medium Motor](https://img.bricklink.com/ItemImage/SN/0/45503-1.png)
+    [LEGO mindstorms ultrasonic sensor](https://www.bricklink.com/v2/catalog/catalogitem.page?S=45504-1#T=S&O={%22iconly%22:0}) | 2 |![LEGO Mindsorms Ultrasonic Sensor](other/images/ultrasonic_sensor.png)
+    [TCS34725 color sensor](https://www.robotics.org.za/AF1334?search=TCS34725)              | 1 |![TCS34725 Color Sensor](other/images/tcs34725_color_sensor.png)
+    [Pixycam 2.1](https://tribotix.com/product/pixycam2-1/)                        | 1 |![Pixycam 2.1](other/images/pixy_2.1.jpeg)
+    [MPU 6050 inertial measurement unit](https://www.robotics.org.za/GY-521) | 1 |![MPU 6050](other/images/mpu_6050.png)
+    [Built-in rotary encoders of the LEGO medium motors](https://www.bricklink.com/v2/catalog/catalogitem.page?S=45503-1#T=S&O={%22iconly%22:0})|2|![LEGO Medium Motor](other/images/medium_motor.png)
 - **Purpose of Each Sensor:**
-    The ultrasonics are used to recenter the robot within each straight section on the mat
+    - The ultrasonic sensors are used to recenter the robot within each straight section on the mat
     
-    The color sensor is used to detect the colored lines on the mat to decide when to turn
+    - The color sensor is used to detect the colored lines on the mat to decide when to turn
     
-    A pixy cam is used to detect traffic objects in the obstacle challenge
+    - A pixy cam is used to detect traffic objects in the obstacle challenge
     
-    The IMU is used to track the robot's absolute angle during the run
+    - The IMU is used to track the robot's absolute angle during the run
     
-    The motor's rotary encoders are used to drive specific distances based on rotations of the drive motor as well as turn the steering to specidfic angles
+    - The motor's rotary encoders are used to drive specific distances based on rotations of the drive motor as well as turn the steering to specidfic angles
 
 - **Circuitry**
     The Pixy cam as well as the ultrasonic sensors are connected directly to the EV3 brick via its sensor input ports. The EV3 receives information about detected lines and absolute angle via the Rapberry Pi Pico which is connected on another input port.
     
-    ### Wiring diagram of EV3 brick and sensors
+    #### Wiring diagram of EV3 brick and sensors
     ![Main wiring diagram of robot](other/images/ev3wiring.png)
     
 
     The Raspberry Pi Pico handles detected colored lines and integrating angular velocity to get absolute angle. The following wiring diagram shows
     how the pico and its sensors receive power
     
-    ### Wiring diagram of Rapberry Pi Pico and sensors
+    #### Wiring diagram of Rapberry Pi Pico and sensors
     ![Wiring diagram of sensor board](other/images/picowiring.png)
 
 ---
@@ -167,6 +173,7 @@ The pico then has it's own regulated 3.3V output that it supply's to the IMU and
 ### 🎯 [Detection Method](#-contents)
 
 - **Camera / Sensor Used:**
+    We use the built-in object detection running on the pixycam
 - **Coordinate Processing:**
 
 
