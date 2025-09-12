@@ -48,7 +48,7 @@
 
 ### 🛠️ [Chassis Design](#-contents)
 
-Our robot design consist mostly of original LEGO parts from the EV3 set, in addition to an external Raspberry Pi Pico microcontroller and other electronic sensors. The build instructions for the lego part of the build can be found [here]("other/Huebert v1 Build Instructions.pdf")
+Our robot design consist mostly of original LEGO parts from the EV3 set, in addition to an external Raspberry Pi Pico microcontroller and other electronic sensors. The build instructions for the lego part of the build can be found [here](other/Huebert_Build_Instructions_v1.pdf)
 
 - **Design Approach:**
     From prior experience, we wanted to have a small and highly manouverable robot. We started off by listing some requirements. This included minizmizing the wheelbase and trackwidth, making the chasis compact and having sharp turning.
