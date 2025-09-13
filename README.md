@@ -608,7 +608,7 @@ Here are pictures of our robot, HueBert:
 
 **Funny photo**
 
-![FUNNTY](t-photos/teamphotot2.jpg "very fun picture. Definitely not losing my mind")
+<p align="center"><img src="t-photos/teamphotot2.jpg" alt="very fun picture. Definitely not losing my mind. BEANS"></img></p>
 
 **Serious photo**
 
