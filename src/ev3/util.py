@@ -76,5 +76,5 @@ def distance_to_angle(dist_mm: int):
 
 def wait_for_start():
   brick = EV3Brick()
-  while not (Button.CENTER in brick.buttons.pressed()):
+  while not (Button.RIGHT in brick.buttons.pressed()):
     wait(200)

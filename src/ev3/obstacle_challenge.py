@@ -11,7 +11,7 @@ from gyro import Gyro
 from pixy import Pixy
 from pid import PIDController
 from math import sin, radians
-from test import parallel_park
+from park import parallel_park
 
 brick = EV3Brick()
 brick.light.off()
@@ -43,7 +43,7 @@ LEFT = 90                   # Counter-clockwise turn 90 degrees
 RIGHT = -90                 # Clockwise turn 90 degrees
 PIXY_MIN_X = 22             # Minimum x coordinate for us to consider tracking an object
 PIXY_MAX_X = 293            # Maximum x coordinate for us to consider tracking an object
-MAX_BLOCK_AREA = 3300        # Area threshold before we dodge an obstacle
+MAX_BLOCK_AREA = 3400        # Area threshold before we dodge an obstacle
 MIN_BLOCK_AREA = 650        # Minimum area threshold before we track an obstacle
 RECENTER_THRESH = 50        # Error threshold for how far off our recentering can be (units in mm)
 DISTANCE_MIN = 50           # Minimum valid distance (mm)
@@ -53,7 +53,7 @@ GYRO_WEIGHT = 0.8           # Weight of the gyro PID controller when driving str
 US_WEIGHT = 0.2             # Weight of the ultrasonic PID controller when driving straight
 RED_SIG = 1                 # Signature index for the red object
 GREEN_SIG = 4               # Signature index for the green object
-NUM_LAPS = 1                # Configure number of laps to do
+NUM_LAPS = 3                # Configure number of laps to do
 
 
 # Initialize sensors
@@ -126,6 +126,8 @@ def l_turn(dir):
     set_steer(steer_cmd)
   set_drive(75)
   
+brick.speaker.beep(duration=500)
+wait_for_start()
 
 
 # Current state
@@ -234,7 +236,7 @@ while not (turns >= NUM_LAPS*4 and abs(angle-end_of_round_heading) < 5):
       continue
 
     area = block["w"] * block["h"]
-    pixy_weight = 1 if area > 1800 else 0.35
+    pixy_weight = 1 if area > 1700 else 0.42
 
     steer_cmd = pixy_pid.loop(316-block["cx"]) * pixy_weight
     set_steer(steer_cmd)
@@ -255,13 +257,20 @@ while not (turns >= NUM_LAPS*4 and abs(angle-end_of_round_heading) < 5):
 
 
   if state.startswith("OVERTAKE"):
-    print("Motor: {}, target: {}, angle: {}, angle_targ: {}".format(drive_motor.angle(), motor_angle_target, angle, gyro_pid.target))
+    # print("Motor: {}, target: {}, angle: {}, angle_targ: {}".format(drive_motor.angle(), motor_angle_target, angle, gyro_pid.target))
     steer_cmd = gyro_pid.loop(angle)
     set_steer(steer_cmd)
-    
-    if drive_motor.angle() > motor_angle_target:
+
+    if drive_motor.angle() > motor_angle_target and state != "OVERTAKE":
+      direction = 1 if state.endswith("RIGHT") else -1
+      state = state[0:8]
+      print("state: {}".format(state))
+      gyro_pid.target += direction * 45
+
+    if lane_width < 600:
       state = "CRUISE"
       gyro_pid.target = prev_heading
+    
     
   if state == "LTURN":
     dir = 1 if detected_color == BLUE else -1

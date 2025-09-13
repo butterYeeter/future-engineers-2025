@@ -23,16 +23,15 @@ float A[3][3] = {{1.096529, -0.033064, -0.055229},
                 {-0.033064, 0.989653, -0.120042},
                 {-0.055229, -0.120042, 0.819875}};
 
-float white_reference[] = {0.5, 0.3571428656578064, 0.2142857164144516};
+float white_reference[] = {0.4675, 0.3125, 0.17875};
 
 void apply_calib(float buf[3]) {
-    float tmp[3] = {buf[0] - bi[0], buf[1] - bi[1], buf[2] - bi[2]};
+  float tmp[3] = {buf[0] - bi[0], buf[1] - bi[1], buf[2] - bi[2]};
 
-    for (int i = 0; i < 3; i++) {
-        buf[i] = A[i][0] * tmp[0] + A[i][1] * tmp[1] + A[i][2] * tmp[2];
-    }
+  for (int i = 0; i < 3; i++) {
+    buf[i] = A[i][0] * tmp[0] + A[i][1] * tmp[1] + A[i][2] * tmp[2];
+  }
 }
-
 
 int main()
 {
@@ -63,13 +62,18 @@ int main()
     gpio_set_dir(TCS_INT, GPIO_IN);
     gpio_pull_up(TCS_INT);
 
+    printf("INIT MPU\n");
     gpio_put(25, true);
     mpu6050_init();
     sleep_ms(3000);
 
+    printf("CALIBRATE GYRO\n");
     gpio_put(25, false);
     mpu6050_calibrate(10000);
     gpio_put(25, true);
+
+    printf("TCS_INIT\n");
+    sleep_ms(2000);
     // qmc5883_init(CONINTUOUS | RATE_200 | GAUSS_EIGHT | OSR_512);
 
     tcs_init();
@@ -164,5 +168,6 @@ int main()
             gpio_put(15, state ^ true);
             last_print = current_time;
         }
+        // printf("Angle: %.2f\n", angle);
     }
 }

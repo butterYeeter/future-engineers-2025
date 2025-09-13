@@ -37,7 +37,7 @@ directions = {
   "r": -1
 }
 
-# calib_steering(steer_motor)
+calib_steering(steer_motor)
 
 
 log = DataLog("", name="../log", timestamp=False)
@@ -88,7 +88,7 @@ def turn_to_angle(angle=90, direction="l", power=50, steering=40, compensation=1
     print("Current Gyro Angle: {}".format(curr))
     print("Difference: {}".format(abs(curr-angle)))
     curr = gyro.get_angle()
-  drive_motor.hold()
+  drive_motor.brake()
 
 
 def set_steer(target_deg):
@@ -105,7 +105,7 @@ def parallel_park(straight_angle):
   last_angle = gyro.get_angle()
   gyro_weight = 0.5
   us_weight = 0.5
-  while wall_counter < 3:
+  while wall_counter < 2:
     dist = right_us.distance()
     delta_dist = abs(dist - last_dist)
     last_dist = dist
