@@ -81,11 +81,13 @@ Cvec3 detect_color(const float rgb_raw[3], const float white[3]) {
         if (h >= 200.0f && h <= 250.0f) {   // Hue range for blue
           return COLOR_BLUE;
         }
-      } else if (s > 0.45f && v > 0.7f) {
-        if ((h >= 0.0f && h <= 50.0f) || (h >= 340.0f && h <= 360.0f)) {    // Hue range for orange
-            return COLOR_ORANGE;
-        }
+    }
+    
+    if (s > 0.35f && v > 0.6f) {
+      if ((h >= 0.0f && h <= 50.0f) || (h >= 340.0f && h <= 360.0f)) {    // Hue range for orange
+          return COLOR_ORANGE;
       }
+    }
 
     return COLOR_UNKNOWN;
 }

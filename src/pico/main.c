@@ -23,7 +23,7 @@ float A[3][3] = {{1.096529, -0.033064, -0.055229},
                 {-0.033064, 0.989653, -0.120042},
                 {-0.055229, -0.120042, 0.819875}};
 
-float white_reference[] = {0.4675, 0.3125, 0.17875};
+float white_reference[] = {0.4583333432674408, 0.3333333432674408, 0.25};
 
 void apply_calib(float buf[3]) {
   float tmp[3] = {buf[0] - bi[0], buf[1] - bi[1], buf[2] - bi[2]};
@@ -74,7 +74,6 @@ int main()
 
     printf("TCS_INIT\n");
     sleep_ms(2000);
-    // qmc5883_init(CONINTUOUS | RATE_200 | GAUSS_EIGHT | OSR_512);
 
     tcs_init();
 
@@ -98,25 +97,13 @@ int main()
         float delta_time = (float)(current_time - last_time)/1000000;
         last_time = current_time;
         
-        // if (tcs_data_available()) {
-        //     tcs_get_rgb(color);
-        // }
         float reg[3];
         tcs_get_rgb(reg);
-        // printf("COL: %.3f, %.3f, %.3f\n", reg[0], reg[1], reg[2]);
-        // printf("DETECTED: %d\n", detected_color);
+
         detected_color = (reset_detected == true) ? detect_color(reg, white_reference) : detected_color;
         if (detected_color != COLOR_UNKNOWN)
             reset_detected = false;
 
-        // detected = detect_color(rgb, white_reference);
-        // printf("%d\n", detected);
-
-        
-        // int16_t raw[3];
-        // qmc5883_raw_data(raw);
-        // float b[3] = {raw[0]*0.033333f, raw[1] * 0.033333f, raw[2] * 0.033333f};
-        // apply_calib(b);
 
         // Low pass filter
         float alpha = delta_time / (RC + delta_time);
@@ -129,6 +116,7 @@ int main()
         // Send current angle if ev3 requests it
         switch (c) {
             case GET_ANGLE:
+            // uart_write_blocking
                 stdio_put_string((char*)&angle, sizeof(float), false, false);
                 bool state = gpio_get(25);
                 gpio_put(25, state ^ true);
@@ -168,6 +156,8 @@ int main()
             gpio_put(15, state ^ true);
             last_print = current_time;
         }
+        
+        sleep_us(400);
         // printf("Angle: %.2f\n", angle);
     }
 }
