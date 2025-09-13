@@ -35,11 +35,14 @@ class Pixy(I2CDevice):
 
   # Function that returns the largest detected object
   def get_largest_signiture(self):
+    # Send command bytes to get the largest block
     cmd = bytes((174, 193, 32, 2, 255, 1))
     self.write(0, cmd)
 
+    # Read in the response packet
     response = self.read(0, 20)
 
+    # Return a dictionary containing the information about the currently detected block.
     return {
       "type":int.from_bytes(response[6:8], 'little'),
       "cx":int.from_bytes(response[8:10], 'little'),
@@ -48,15 +51,10 @@ class Pixy(I2CDevice):
       "h":int.from_bytes(response[14:16], 'little'),
     }
   
-  # def get_largest_block(self):
-  #   sig = self.get_largest_signiture()["type"]
-  #   return {1: "red", 2: "green"}.get(sig, None)
   def get_largest_block(self):
     data = self.get_largest_signiture()
     sig = data["type"]
     if sig in SIGNITURES:  # known obstacle colors
-      # data["signature"] = sig
-      # data["color"] = {1: "red", 2: "green"}[sig]
       return data
     return None
 

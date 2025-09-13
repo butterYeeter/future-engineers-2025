@@ -37,7 +37,7 @@ directions = {
   "r": -1
 }
 
-calib_steering(steer_motor)
+# calib_steering(steer_motor)
 
 
 log = DataLog("", name="../log", timestamp=False)
@@ -99,12 +99,13 @@ def set_steer(target_deg):
 def parallel_park(straight_angle):
   wall_counter = 0
   upid.target = 270
+  gpid.target = straight_angle
   drive_motor.dc(60)
   last_dist = right_us.distance()
   last_angle = gyro.get_angle()
   gyro_weight = 0.5
   us_weight = 0.5
-  while wall_counter < 2:
+  while wall_counter < 3:
     dist = right_us.distance()
     delta_dist = abs(dist - last_dist)
     last_dist = dist
@@ -113,14 +114,14 @@ def parallel_park(straight_angle):
     delta_angle = abs(angle - straight_angle)
     last_angle = angle
 
-    # us_weight = 0.6
-    # gyro_weight = 0.4
-    if delta_angle > 37:
-      us_weight = 0
-      gyro_weight = 1
+    # us_weight = 0.5
+    # gyro_weight = 0.5
+    if delta_angle > 25:
+      us_weight = 0.4
+      gyro_weight = 0.6
     else:
-      us_weight = 0.5
-      gyro_weight = 0.5
+      us_weight = 0.7
+      gyro_weight = 0.3
 
     if delta_dist > 150 and abs(dist - upid.target) < 50:
       us_weight *= 0.5
@@ -149,3 +150,6 @@ def parallel_park(straight_angle):
 # turn_to_angle(15,"rift", -50, compensation=3)
 # turn_to_angle(45, "light", 80)
 # turn_to_angle(60, "reft", 80)
+
+
+# parallel_park(gyro.get_angle())

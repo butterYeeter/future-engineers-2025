@@ -32,6 +32,7 @@ class ColorSensor():
     max_component = max(col[0], max(col[1], col[2]))
     norm = [c/max_component for c in col]
 
+    print(norm)
     return norm
   
   # Use the pico to get the detected color instead
